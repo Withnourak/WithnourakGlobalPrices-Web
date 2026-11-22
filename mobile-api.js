@@ -7,9 +7,11 @@ const _fetch = window.fetch.bind(window);
 const PROXIES = [u => 'https://corsproxy.io/?url=' + encodeURIComponent(u), u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)];
 const fetch = async (u, o = {}) => {
   const opts = { signal: o.signal };
-  if (!/yahoo|stooq/.test(u)) { try { const r = await _fetch(u, opts); if (r.ok) return r; } catch (e) { if (o.signal && o.signal.aborted) throw e; } }
-  let last; for (const p of PROXIES) { try { const r = await _fetch(p(u), opts); if (r.ok) return r; last = new Error('HTTP ' + r.status); } catch (e) { last = e; } }
-  throw last;
+  // بيانات Yahoo تُجلب على خوادم GitHub وتُنشر مع الموقع كل 10 دقائق
+  const y = u.match(/finance.yahoo.com/v8/finance/chart/([^?]+)?range=([^&]+)&interval=([^&]+)/);
+  if (y) { const r = await _fetch('data/y/' + encodeURIComponent(decodeURIComponent(y[1])) + '_' + y[2] + '_' + y[3] + '.json?t=' + Math.floor(Date.now() / 300000), opts); if (r.ok) return r; throw new Error('no data'); }
+  if (/stooq/.test(u)) throw new Error('unavailable');
+  return _fetch(u, opts);
 };
 const OZ_TO_GRAM = 31.1034768;
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36';
