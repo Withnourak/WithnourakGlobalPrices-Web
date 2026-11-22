@@ -115,7 +115,7 @@ function odo(el, text, raw) {
   const cols = el.querySelectorAll('.d .s');
   const digits = text.replace(/\D/g, '');
   const W = digitWidths(el);
-  requestAnimationFrame(() => requestAnimationFrame(() => cols.forEach((c, i) => { c.style.transform = `translateY(-${+digits[i]}em)`; c.parentElement.style.width = W[+digits[i]] + 'px'; })));
+  requestAnimationFrame(() => requestAnimationFrame(() => cols.forEach((c, i) => { c.style.transform = `translateY(-${+digits[i]}em)`; c.parentElement.style.width = W[+digits[i]]; })));
   if (raw != null && el._raw != null && raw !== el._raw) {
     el.classList.remove('flash-up', 'flash-down'); void el.offsetWidth;
     el.classList.add(raw > el._raw ? 'flash-up' : 'flash-down');
@@ -123,14 +123,14 @@ function odo(el, text, raw) {
   }
   el._raw = raw;
 }
+// عرض كل رقم بوحدة em (مستقل عن تكبير الصفحة) عبر قياس الخط على canvas
+const _mc = document.createElement('canvas').getContext('2d');
 function digitWidths(el) {
-  const fs = getComputedStyle(el).fontSize;
-  const key = fs + document.fonts.status;
+  const key = document.fonts.status;
   if (el._wfs === key && el._w) return el._w;
-  const m = document.createElement('span'); m.style.cssText = `position:absolute;visibility:hidden;font:900 ${fs} DIN;white-space:nowrap`;
-  document.body.appendChild(m);
-  const w = []; for (let d = 0; d < 10; d++) { m.textContent = String(d); w.push(Math.ceil(m.getBoundingClientRect().width)); }
-  m.remove(); el._wfs = key; el._w = w; return w;
+  _mc.font = "900 100px 'DIN'";
+  const w = []; for (let d = 0; d < 10; d++) w.push((_mc.measureText(String(d)).width / 100 + 0.02).toFixed(3) + 'em');
+  el._wfs = key; el._w = w; return w;
 }
 const badge = (pct, sm) => pct == null || !isFinite(pct) ? '' : `<span class="chgb ${pct >= 0 ? 'up' : 'down'}${sm ? ' sm' : ''}">${pct >= 0 ? '▲ +' : '▼ '}${fmt(pct)}%</span>`;
 function delta(el, pct) {
