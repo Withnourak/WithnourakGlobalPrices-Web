@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' https: wss: data: blob: capacitor: http://localhost; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; script-src 'self'">
+<title>Withnourak Global Prices</title>
+<link rel="icon" href="logo-mark.png">
+<meta name="theme-color" content="#05050a">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+<canvas id="fx-bg"></canvas>
+<div class="aurora"><i></i><i></i><i></i></div>
+
+<div class="shell">
+  <!-- ============ القائمة الجانبية ============ -->
+  <aside class="side">
+    <div class="side-logo"><img src="logo.png" alt="Nour Aldeen Karam"></div>
+    <nav class="nav" id="nav">
+      <button data-page="home" class="on"><span class="ic">◈</span><span>الرئيسية</span></button>
+      <button data-page="gold"><span class="ic">▰</span><span>المعادن</span></button>
+      <button data-page="fx"><span class="ic">⇄</span><span>العملات</span></button>
+      <button data-page="crypto"><span class="ic">₿</span><span>الرقمية</span></button>
+      <button data-page="stocks"><span class="ic">◢</span><span>الأسهم</span></button>
+      <button data-page="hist"><span class="ic">⌛</span><span>التاريخ</span></button>
+      <i class="nav-ind" id="navInd"></i>
+    </nav>
+    <div class="side-bottom">
+      <button class="side-btn" id="btnTv" title="وضع العرض التلقائي"><span class="ic">▶</span><span>وضع العرض</span></button>
+      <button class="side-btn" id="btnFull" title="ملء الشاشة F11"><span class="ic">⛶</span><span>ملء الشاشة</span></button>
+      <button class="side-btn" id="btnSettings"><span class="ic">⚙</span><span>الإعدادات</span></button>
+    </div>
+  </aside>
+
+  <!-- ============ المحتوى ============ -->
+  <div class="main">
+    <header class="topbar">
+      <div class="title-wrap">
+        <div class="crumb" id="crumb">لوحة الأسواق</div>
+        <h1 id="pageTitle">نظرة عامة على الأسواق</h1>
+      </div>
+
+      <div class="status">
+        <div class="pill live"><i id="liveDot"></i><span id="liveText">جارٍ الاتصال…</span></div>
+        <div class="pill fxpill" data-go="fx">🇺🇸 1 دولار = <b class="num" id="usdAed">—</b> درهم 🇦🇪</div>
+        <div class="pill"><span id="mktGold"></span></div>
+        <div class="pill"><span id="mktNY"></span></div>
+      </div>
+
+      <div class="clockbox">
+        <div class="digital">
+          <div class="dlabel">توقيت الإمارات · GMT+4</div>
+          <div class="dtime"><span id="clock">--:--:--</span><span class="ampm" id="ampm">PM</span></div>
+          <div class="ddate"><span id="dateG">—</span> · <span id="dateH">—</span></div>
+        </div>
+      </div>
+
+      <div class="seg flags-seg" id="curSeg"><button data-cur="AED" class="on" title="درهم إماراتي"><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#00732f"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#000"/><rect width="8" height="20" fill="#ff0000"/></svg></button><button data-cur="USD" title="دولار أمريكي"><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#b22234"/><g fill="#fff"><rect y="1.54" width="30" height="1.54"/><rect y="4.62" width="30" height="1.54"/><rect y="7.70" width="30" height="1.54"/><rect y="10.78" width="30" height="1.54"/><rect y="13.86" width="30" height="1.54"/><rect y="16.94" width="30" height="1.54"/></g><rect width="12" height="10.77" fill="#3c3b6e"/><g fill="#fff"><circle cx="1.5" cy="1.2" r=".45"/><circle cx="3.7" cy="1.2" r=".45"/><circle cx="5.9" cy="1.2" r=".45"/><circle cx="8.1" cy="1.2" r=".45"/><circle cx="10.3" cy="1.2" r=".45"/><circle cx="2.6" cy="3.0" r=".45"/><circle cx="4.8" cy="3.0" r=".45"/><circle cx="7.0" cy="3.0" r=".45"/><circle cx="9.2" cy="3.0" r=".45"/><circle cx="11.4" cy="3.0" r=".45"/><circle cx="1.5" cy="4.7" r=".45"/><circle cx="3.7" cy="4.7" r=".45"/><circle cx="5.9" cy="4.7" r=".45"/><circle cx="8.1" cy="4.7" r=".45"/><circle cx="10.3" cy="4.7" r=".45"/><circle cx="2.6" cy="6.5" r=".45"/><circle cx="4.8" cy="6.5" r=".45"/><circle cx="7.0" cy="6.5" r=".45"/><circle cx="9.2" cy="6.5" r=".45"/><circle cx="11.4" cy="6.5" r=".45"/><circle cx="1.5" cy="8.2" r=".45"/><circle cx="3.7" cy="8.2" r=".45"/><circle cx="5.9" cy="8.2" r=".45"/><circle cx="8.1" cy="8.2" r=".45"/><circle cx="10.3" cy="8.2" r=".45"/><circle cx="2.6" cy="9.9" r=".45"/><circle cx="4.8" cy="9.9" r=".45"/><circle cx="7.0" cy="9.9" r=".45"/><circle cx="9.2" cy="9.9" r=".45"/><circle cx="11.4" cy="9.9" r=".45"/></g></svg></button><button data-cur="SYP" title="ليرة سورية"><svg class="flag" viewBox="0 0 30 20"><rect width="30" height="20" fill="#007a3d"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#000"/><g fill="#ce1126"><path id="sy-st2" d="M8 8.2l.6 1.7h1.8l-1.5 1.1.6 1.7L8 11.6l-1.5 1.1.6-1.7-1.5-1.1h1.8z"/><use href="#sy-st2" x="7"/><use href="#sy-st2" x="14"/></g></svg></button></div>
+    </header>
+
+    <div class="pages" id="pages">
+
+      <!-- =========================== الرئيسية =========================== -->
+      <section class="page on" data-page="home">
+        <div class="home-grid">
+
+          <div class="glass hero"><canvas class="hero-spark" id="heroSpark"></canvas>
+            <div class="hero-left">
+              <div class="ingot-stage">
+                <div class="ingot" id="ingot">
+                  <div class="f front"><span class="eng" style="font-size:16px">WITHNOURAK</span><span class="eng2">FINE GOLD</span><span class="eng3">999.9</span><span class="eng4">1 KILO · DUBAI</span></div>
+                  <div class="f back"></div><div class="f top"></div><div class="f bottom"></div><div class="f left"></div><div class="f right"></div>
+                </div>
+                <div class="ingot-shadow"></div>
+              </div>
+            </div>
+            <div class="hero-right">
+              <div class="hero-tags">
+                <span class="chip gold">ذهب عيار 24 · 999.9</span>
+                <span class="delta" id="gDelta">—</span>
+              </div>
+              <div class="hero-cap">سعر غرام الذهب الآن</div>
+              <div class="hero-num"><span class="odo gold" id="g24"></span><span class="cur-sym gold-sym"></span><span class="dual-box"><span class="hero-unit unit" id="g24u">درهم</span><span class="dual" id="g24dual"></span></span></div>
+              <div class="hero-sub">
+                <div><span class="k" id="ozU">الأونصة (درهم)</span><b class="num" id="oz">—</b></div>
+                <div><span class="k">بالدولار للغرام</span><b class="num" id="g24alt">—</b></div>
+                <div><span class="k">أعلى اليوم</span><b class="num up" id="gHi">—</b></div>
+                <div><span class="k">أدنى اليوم</span><b class="num down" id="gLo">—</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass karat-col" id="karatCol"></div>
+
+          <div class="glass stat btc-big" data-go="crypto">
+            <canvas class="mini-spark" id="btcSpark"></canvas>
+            <div class="st-head"><span class="chip btc"><span class="coin-mini"><img src="https://assets.coincap.io/assets/icons/btc@2x.png" alt="" data-fb="₿"></span>بيتكوين · BTC</span><span class="delta" id="btcDelta">—</span></div>
+            <div class="btc-body">
+              <div>
+                <div class="st-cap">سعر البيتكوين الآن</div>
+                <div class="st-num"><span class="odo btc" id="btc"></span><span class="cur-sym btc-sym"></span><span class="dual-box sm"><em class="unit" id="btcU"></em><span class="dual" id="btcDual"></span></span></div>
+              </div>
+              <div class="btc-hl">
+                <div><span>أعلى 24 ساعة</span><b class="up" id="btcH">—</b></div>
+                <div><span>أدنى 24 ساعة</span><b class="down" id="btcL">—</b></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="glass stat silver-s" data-go="gold">
+            <div class="st-head"><span class="chip silver">الفضة · XAG</span><svg class="ring" id="agRing" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><circle cx="22" cy="22" r="18" class="p"/></svg></div>
+            <div class="st-cap">الأونصة</div>
+            <div class="st-num"><span class="odo silver" id="agOz"></span><span class="cur-sym silver-sym"></span><span class="dual-box sm"><em class="unit" id="agU"></em><span class="dual" id="agDual"></span></span></div>
+            <div class="st-foot kilo"><span>الكيلو <b class="num" id="agKg">—</b></span><span class="delta sm" id="agDelta">—</span></div>
+            <div class="st-foot2">الغرام <b id="agG">—</b></div>
+            <canvas class="mini-spark" id="agSpark"></canvas>
+          </div>
+
+          <div class="glass stat copper-s" data-go="gold" data-metal="copper">
+            <div class="st-head"><span class="chip copper">النحاس · HG</span><svg class="ring" id="cuRing" viewBox="0 0 44 44"><circle cx="22" cy="22" r="18"/><circle cx="22" cy="22" r="18" class="p"/></svg></div>
+            <div class="st-cap">الكيلو</div>
+            <div class="st-num"><span class="odo copper" id="cuKg"></span><span class="cur-sym copper-sym"></span><span class="dual-box sm"><em class="unit" id="cuU"></em><span class="dual" id="cuDual"></span></span></div>
+            <div class="st-foot kilo"><span>الطن <b class="num" id="cuT">—</b></span><span class="delta sm" id="cuDelta">—</span></div>
+            <canvas class="mini-spark" id="cuSpark"></canvas>
+          </div>
+
+          <div class="glass movers">
+            <div class="cc-head"><div class="cc-title">الأسهم العالمية</div><button class="link" data-go="stocks">عرض الكل والرسوم البيانية ←</button></div>
+            <div class="heat big" id="homeHeat"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================== الذهب والفضة =========================== -->
+      <section class="page" data-page="gold">
+        <div class="gold-grid">
+          <div class="glass chart-card big-chart">
+            <div class="cc-head">
+              <div class="metal-tabs" id="metalTabs"><button data-m="gold" class="on">الذهب</button><button data-m="silver">الفضة</button><button data-m="copper">النحاس</button></div>
+              <div class="big-price"><span class="odo gold" id="gpBig"></span><span class="cur-sym gold-sym"></span><span class="dual-box sm"><em class="unit" id="gpBigU">درهم / غرام</em><span class="dual" id="gpDual"></span></span><span class="delta" id="gpDelta">—</span></div>
+              <div class="ranges" data-chart="gold"><button data-r="1D" class="on">يوم</button><button data-r="1W">أسبوع</button><button data-r="1M">شهر</button><button data-r="1Y">سنة</button><button data-r="3Y">3 سنوات</button><button data-r="5Y">5 سنوات</button><button data-r="10Y">10 سنوات</button><button data-r="15Y">15 سنة</button><button data-r="20Y">20 سنة</button></div>
+            </div>
+            <div class="chart-wrap"><canvas id="goldChart"></canvas><div class="tip" id="goldTip"></div></div>
+          </div>
+
+          <div class="glass table-card">
+            <div class="cc-head"><div class="cc-title">جدول أسعار الذهب</div><span id="gtBadge"></span></div>
+            <table class="ptable" id="goldTable"></table>
+          </div>
+
+          <div class="glass calc-card">
+            <div class="cc-title">حاسبة قيمة الذهب</div>
+            <div class="calc-form">
+              <label>الوزن (غرام)<input id="cW" type="text" inputmode="decimal" autocomplete="off" value="10" min="0" step="0.01"></label>
+              <label>العيار<div class="kseg" id="cK"><button data-k="24">24</button><button data-k="22">22</button><button data-k="21" class="on">21</button><button data-k="18">18</button></div></label>
+              <label>المصنعية / غرام (درهم)<input id="cM" type="text" inputmode="decimal" autocomplete="off" value="0" min="0" step="0.5"></label>
+              <label class="vat"><input type="checkbox" id="cV"> إضافة ضريبة القيمة المضافة 5%</label>
+            </div>
+            <div class="calc-out">
+              <div class="k">القيمة التقديرية</div>
+              <div class="v num" id="cOut">—</div>
+              <div class="s" id="cOutUsd">—</div>
+            </div>
+          </div>
+
+          <div class="glass table-card">
+            <div class="cc-head"><div class="cc-title">الفضة والنحاس</div><span class="stb" id="stBadge"></span></div>
+            <table class="ptable" id="silverTable"></table>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================== العملات =========================== -->
+      <section class="page" data-page="fx">
+        <div class="fx-grid">
+          <div class="glass conv">
+            <div class="cc-title">محوّل العملات</div>
+            <div class="conv-row">
+              <div class="conv-box"><select id="cvFrom"></select><input id="cvAmt" type="text" inputmode="decimal" autocomplete="off" value="1000" min="0"></div>
+              <button class="swap" id="cvSwap">⇅</button>
+              <div class="conv-box out"><select id="cvTo"></select><div class="num" id="cvOut">—</div></div>
+            </div>
+            <div class="conv-rate" id="cvRate">—</div>
+          </div>
+          <div class="glass usd-big">
+            <div class="flags">🇺🇸 <span>⇄</span> 🇦🇪</div>
+            <div class="st-cap">1 دولار أمريكي يساوي</div>
+            <div class="usd-num"><span class="odo fxc" id="usdAed2"></span></div>
+            <div class="st-cap">درهم إماراتي — مربوط رسمياً بالدولار منذ 1997</div>
+          </div>
+          <div class="glass fx-board">
+            <div class="cc-head"><div class="cc-title">العملات مقابل الدرهم الإماراتي</div><div class="cc-sub" id="fxSrc"></div></div>
+            <div class="fx-tiles" id="fxTiles"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================== الرقمية =========================== -->
+      <section class="page" data-page="crypto">
+        <div class="cr-grid">
+          <div class="glass chart-card cr-chart">
+            <div class="cc-head">
+              <div class="cr-sel"><span class="coin big" id="crIcon">₿</span><div><div class="cc-title" id="crName">بيتكوين</div><div class="big-price sm"><span class="odo btc" id="crBig"></span><span class="cur-sym btc-sym"></span><span class="dual-box sm"><em class="unit" id="crBigU">دولار</em><span class="dual" id="crDual"></span></span><span class="delta" id="crDelta">—</span></div></div></div>
+              <div class="ranges" data-chart="crypto"><button data-r="1D" class="on">يوم</button><button data-r="1W">أسبوع</button><button data-r="1M">شهر</button><button data-r="1Y">سنة</button><button data-r="3Y">3 سنوات</button><button data-r="5Y">5 سنوات</button><button data-r="10Y">10 سنوات</button></div>
+            </div>
+            <div class="chart-wrap"><canvas id="crChart"></canvas><div class="tip" id="crTip"></div></div>
+          </div>
+          <div class="glass cr-list" id="crList"></div>
+        </div>
+      </section>
+
+      <!-- =========================== الأسهم =========================== -->
+      <section class="page" data-page="stocks">
+        <div class="st-grid">
+          <div class="glass chart-card sk-chart">
+            <div class="cc-head">
+              <div class="sk-title"><span class="logo-chip lg" id="skLogo"></span><div><div class="cc-title" id="skName">—</div><div class="big-price sm"><span class="odo" id="skBig"></span><span class="cur-sym" data-fixed="USD"></span><span class="dual-box sm"><em class="unit"><i class="usd-s">$</i><span>دولار</span></em><span class="dual" id="skDual"></span></span><span class="delta" id="skDelta">—</span></div></div></div>
+              <div class="ranges" data-chart="stock"><button data-r="1D" class="on">يوم</button><button data-r="1W">أسبوع</button><button data-r="1M">شهر</button><button data-r="1Y">سنة</button><button data-r="3Y">3 سنوات</button><button data-r="5Y">5 سنوات</button><button data-r="10Y">10 سنوات</button><button data-r="15Y">15 سنة</button><button data-r="20Y">20 سنة</button></div>
+            </div>
+            <div class="chart-wrap"><canvas id="skChart"></canvas><div class="tip" id="skTip"></div></div>
+          </div>
+          <div class="glass sk-tiles-card">
+            <div class="cc-head"><div class="cc-title">خريطة السوق</div><div class="cc-sub">اضغط على أي سهم لعرض الرسم البياني</div></div>
+            <div class="heat big" id="skHeat"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- =========================== التاريخ (من سنة إلى 20 سنة) =========================== -->
+      <section class="page" data-page="hist">
+        <div class="hist-wrap">
+          <div class="glass hist-bar">
+            <div><div class="cc-title">تغيّر الأسعار على المدى الطويل</div><div class="cc-sub">اختر الفترة لمقارنة الذهب والفضة والنحاس والبيتكوين</div></div>
+            <div class="ranges big" data-chart="hist"><button data-r="1Y">سنة</button><button data-r="3Y">3 سنوات</button><button data-r="5Y" class="on">5 سنوات</button><button data-r="10Y">10 سنوات</button><button data-r="15Y">15 سنة</button><button data-r="20Y">20 سنة</button></div>
+          </div>
+          <div class="hist-grid">
+            <div class="glass chart-card hcard" data-k="gold"><div class="cc-head"><span class="chip gold">الذهب · غرام 24</span><div class="hstat" id="hs_gold"></div></div><div class="chart-wrap"><canvas id="hc_gold"></canvas><div class="tip" id="ht_gold"></div></div></div>
+            <div class="glass chart-card hcard" data-k="silver"><div class="cc-head"><span class="chip silver">الفضة · أونصة</span><div class="hstat" id="hs_silver"></div></div><div class="chart-wrap"><canvas id="hc_silver"></canvas><div class="tip" id="ht_silver"></div></div></div>
+            <div class="glass chart-card hcard" data-k="copper"><div class="cc-head"><span class="chip copper">النحاس · كيلو</span><div class="hstat" id="hs_copper"></div></div><div class="chart-wrap"><canvas id="hc_copper"></canvas><div class="tip" id="ht_copper"></div></div></div>
+            <div class="glass chart-card hcard" data-k="btc"><div class="cc-head"><span class="chip btc">البيتكوين</span><div class="hstat" id="hs_btc"></div></div><div class="chart-wrap"><canvas id="hc_btc"></canvas><div class="tip" id="ht_btc"></div></div></div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <footer class="ticker"><div class="ticker-track" id="ticker"></div></footer>
+  </div>
+</div>
+
+<div class="tv-bar" id="tvBar"><i></i></div>
+
+<!-- الإعدادات -->
+<div class="modal" id="setModal">
+  <div class="sheet glass">
+    <button class="x" data-close>✕</button>
+    <h3>الإعدادات</h3>
+    <div class="form">
+      <label class="wide">رموز الأسهم (افصل بفاصلة)<input id="sStocks" type="text" dir="ltr"></label>
+      <label class="wide">العملات الرقمية<input id="sCrypto" type="text" dir="ltr"></label>
+      <label class="wide">العملات مقابل الدرهم<input id="sFx" type="text" dir="ltr"></label>
+      <label>سعر الليرة السورية المعتمد<select id="sSypMode"><option value="market">سعر السوق (الصرافين)</option><option value="official">نشرة مصرف سوريا المركزي</option></select></label>
+      <label>سعر السوق: 1 دولار =<input id="sSypM" type="text" inputmode="decimal" dir="ltr"></label>
+      <label>سعر المركزي: 1 دولار =<input id="sSypO" type="text" inputmode="decimal" dir="ltr"></label>
+      <label>تحديث الأسهم والنحاس كل<select id="sInt"><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option><option value="30">30 ثانية</option><option value="60">دقيقة</option></select></label>
+      <label>مدة كل صفحة في وضع العرض<select id="sTv"><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option><option value="30">30 ثانية</option></select></label>
+    </div>
+    <p class="note">أمثلة: AAPL, NVDA, 2222.SR (أرامكو), EMAAR.AE (إعمار) · رقمية: BTC, ETH, SOL, XRP, BNB, DOGE<br>الأسعار عالمية مباشرة بتوقيت الإمارات. أسعار الذهب هي السعر الفوري العالمي بدون مصنعية أو ضريبة.</p>
+    <button class="primary" id="sSave">حفظ</button>
+  </div>
+</div>
+
+<script src="web-fit.js"></script>
+<script src="mobile-api.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

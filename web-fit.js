@@ -1,0 +1,1 @@
+(function(){function f(){var w=innerWidth,h=innerHeight;var z=w>760?Math.max(.45,Math.min(1.6,Math.min(w/1920,h/1060))):1;document.documentElement.style.zoom=z===1?'':z;document.documentElement.style.setProperty('--vh',(h/z)+'px');}addEventListener('resize',f);f();})();
