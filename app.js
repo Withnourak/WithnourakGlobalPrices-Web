@@ -59,7 +59,7 @@ document.addEventListener('error', e => {
 }, true);
 document.addEventListener('load', e => {
   const img = e.target; if (!(img instanceof HTMLImageElement) || !img.closest('.logo-chip')) return;
-  if (img.naturalWidth < 20 && img.dataset.alt) img.dispatchEvent(new Event('error'));
+  if (!/\.svg(\?|$)/.test(img.src) && img.naturalWidth < 20 && img.dataset.alt) img.dispatchEvent(new Event('error'));
 }, true);
 
 document.addEventListener('error', e => { const img = e.target; if (img instanceof HTMLImageElement && img.dataset.fb) img.replaceWith(document.createTextNode(img.dataset.fb)); }, true);
