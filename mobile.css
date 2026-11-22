@@ -138,5 +138,10 @@ body[data-cur=SYP] .st-foot b,body[data-cur=SYP] .st-foot.kilo b{font-size:14px!
 .btc-hl div{flex-direction:row!important;justify-content:space-between;align-items:baseline;gap:8px}
 .btc-hl b{display:flex;flex-direction:column;align-items:flex-end}
 .btc-hl b .dl{margin:0!important}
+/* v3.3: بطاقة سهم بعرض الشاشة: اسم كامل وشعار كبير وأرقام كبيرة */
+#homeHeat,#skHeat{grid-template-columns:1fr!important;grid-auto-rows:auto!important;overflow:visible!important}
+#homeHeat .tile.v3,#skHeat .tile.v3{min-height:150px;height:auto!important}
+#homeHeat .tile.v3 .logo-chip.brand,#skHeat .tile.v3 .logo-chip.brand{height:64px!important;max-height:64px;width:min(70%,220px)!important}
+#homeHeat .tile.v3 .v3-top .cname,#skHeat .tile.v3 .v3-top .cname,#homeHeat .tile.v3 .v3-top .pc,#skHeat .tile.v3 .v3-top .pc{font-size:17px!important}
 
 }

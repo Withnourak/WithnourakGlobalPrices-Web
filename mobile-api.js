@@ -7,7 +7,7 @@ const PROXIES = [u => 'https://corsproxy.io/?url=' + encodeURIComponent(u), u =>
 const fetch = async (u, o = {}) => {
   const opts = Object.assign({}, o); delete opts.headers;
   // بيانات Yahoo تُجلب على خوادم GitHub وتُنشر مع الموقع كل 10 دقائق
-  const y = u.match(/finance.yahoo.com/v8/finance/chart/([^?]+)?range=([^&]+)&interval=([^&]+)/);
+  const y = u.match(/finance\.yahoo\.com\/v8\/finance\/chart\/([^?]+)\?range=([^&]+)&interval=([^&]+)/);
   if (y) { const r = await _fetch('data/y/' + encodeURIComponent(decodeURIComponent(y[1])) + '_' + y[2] + '_' + y[3] + '.json?t=' + Math.floor(Date.now() / 300000), opts); if (r.ok) return r; throw new Error('no data'); }
   if (/stooq/.test(u)) throw new Error('unavailable');
   return _fetch(u, opts);
@@ -100,10 +100,10 @@ async function uaeStocks() {
   const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 10000);
   try {
     const res = await fetch('https://scanner.tradingview.com/uae/scan', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'text/plain' },
-      body: JSON.stringify({ symbols: { tickers: UAE_TICKERS }, columns: ['name', 'description', 'close', 'change', 'currency', 'high', 'low'] }) });
+      body: JSON.stringify({ symbols: { tickers: UAE_TICKERS }, columns: ['name', 'description', 'close', 'change', 'currency', 'high', 'low', 'logoid'] }) });
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
-    return j.data.map(r => ({ symbol: r.s, market: r.s.split(':')[0], price: r.d[2], changePct: r.d[3], name: r.d[1], currency: r.d[4] || 'AED', high: r.d[5], low: r.d[6], spark: [], source: 'TradingView' }));
+    return j.data.map(r => ({ symbol: r.s, market: r.s.split(':')[0], price: r.d[2], changePct: r.d[3], name: r.d[1], currency: r.d[4] || 'AED', high: r.d[5], low: r.d[6], logoid: r.d[7] || '', spark: [], source: 'TradingView' }));
   } finally { clearTimeout(t); }
 }
 

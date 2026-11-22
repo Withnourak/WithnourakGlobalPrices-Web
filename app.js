@@ -35,7 +35,11 @@ const DOMAINS = {
   'DEWA.AE': 'dewa.gov.ae', 'SALIK.AE': 'salik.ae', 'ETISALAT.AE': 'eand.com', '1120.SR': 'alrajhibank.com.sa', '2010.SR': 'sabic.com'
 };
 function logoSources(sym) {
-  if (sym.includes(':')) return DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : [];
+  if (sym.includes(':')) {
+    const q = ((data && data.uae) || []).find(x => x.symbol === sym), tv = q && q.logoid ? [`https://s3-symbol-logo.tradingview.com/${q.logoid}--big.svg`, `https://s3-symbol-logo.tradingview.com/${q.logoid}.svg`] : [];
+    return tv.concat(DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : []);
+  }
+  if (false) return DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : [];
   const base = sym.split('.')[0];
   const list = [`https://financialmodelingprep.com/image-stock/${encodeURIComponent(sym)}.png`];
   if (base !== sym) list.push(`https://financialmodelingprep.com/image-stock/${encodeURIComponent(base)}.png`);
@@ -502,9 +506,9 @@ function renderHome(live) {
     spark($('cuSpark'), c.spark, '#e0875a');
   }
   if (live) return;
-  const stx = marketList('home').slice(0, 12);
-  $('homeHeat').style.setProperty('--c', Math.min(6, Math.max(1, stx.length)));
-  $('homeHeat').innerHTML = stx.map(q => tileHtml(q, true)).join('');
+  const stx = marketList('home').slice(0, 8);
+  $('homeHeat').style.setProperty('--c', Math.min(4, Math.max(1, stx.length)));
+  $('homeHeat').innerHTML = stx.map(q => tileHtml(q, true)).join(''); requestAnimationFrame(() => fitPrices($('homeHeat')));
   $('homeHeat').querySelectorAll('.tile').forEach((t, i) => { spark(t.querySelector('canvas'), stx[i].spark, '#ffffff'); t.onclick = () => { st.stock = t.dataset.s; mkt.stocks = mkt.home; document.querySelectorAll('.mkt-tabs[data-mt=stocks] button').forEach(x => x.classList.toggle('on', x.dataset.m === mkt.stocks)); go('stocks'); }; });
 }
 // اختيار السوق: العالمية أو أبوظبي أو دبي
@@ -526,10 +530,23 @@ function tileHtml(q, big) {
   const usd = inUsd == null ? fmt(q.price) + ' ' + cur : '$' + fmt(inUsd);
   const aedLine = inUsd == null ? '' : `<div class="aedp">${DH}${fmt(cur === 'AED' ? q.price : q.price * aed())}</div>`;
   // تخطيط بصفوف ثابتة: لا يتداخل الشعار أو النسبة مع الأسعار
-  return `<div class="tile ${st.stock === q.symbol && big ? 'sel' : ''}" data-s="${q.symbol}" style="background:${bg}">
+  // v3.3: الاسم والنسبة بالأعلى، شعار كبير بالوسط، السعران بخط كبير يتكيّف مع عرض البطاقة
+  return `<div class="tile v3 ${st.stock === q.symbol && big ? 'sel' : ''}" data-s="${q.symbol}" style="background:${bg}">
     ${big ? '<canvas></canvas>' : ''}
-    <div class="t-row t-top"><div class="brandbox"><div class="cname">${STOCK_NAMES[q.symbol] || q.name || q.symbol}</div>${logoHtml(q.symbol, 'brand')}</div><div class="pc ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲ +' : '▼ '}${fmt(p)}%</div></div>
+    <div class="v3-top"><div class="cname">${STOCK_NAMES[q.symbol] || q.name || q.symbol}</div><div class="pc ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲ +' : '▼ '}${fmt(p)}%</div></div>
+    <div class="v3-logo">${logoHtml(q.symbol, 'brand')}</div>
     <div class="t-row t-prices"><div class="pr">${usd}</div>${aedLine}</div></div>`;
+}
+// تكبير أرقام الأسعار لأقصى حجم يتسع في البطاقة دون قص
+function fitPrices(root) {
+  (root || document).querySelectorAll('.tile.v3 .t-prices').forEach(r => {
+    const W = r.clientWidth; if (!W) return;
+    const kids = [...r.children];
+    let fs = Math.min(40, Math.max(18, r.closest('.tile').clientHeight * .24));
+    r.style.fontSize = fs + 'px';
+    const need = kids.reduce((a, k) => a + k.scrollWidth, 0) + 14 * (kids.length - 1);
+    if (need > W) r.style.fontSize = Math.max(12, Math.floor(fs * W / need * 10) / 10) + 'px';
+  });
 }
 
 function renderGold() {
@@ -630,8 +647,8 @@ function renderStocks() {
   const isAed = q.currency === 'AED';
   odo($('skBig'), fmt(isAed ? q.price / aed() : q.price), q.price); delta($('skDelta'), q.changePct);
   $('skDual').innerHTML = q.currency && !['USD', 'AED'].includes(q.currency) ? '' : `<b>${DH}${fmt(isAed ? q.price : q.price * aed())}</b><small>درهم</small>`;
-  const h = $('skHeat'); h.style.setProperty('--c', Math.min(8, Math.max(4, Math.ceil(L.length / 2))));
-  h.innerHTML = L.map(x => tileHtml(x, true)).join('');
+  const h = $('skHeat'); h.style.setProperty('--c', Math.min(5, Math.max(3, Math.ceil(L.length / 3))));
+  h.innerHTML = L.map(x => tileHtml(x, true)).join(''); requestAnimationFrame(() => fitPrices(h));
   h.querySelectorAll('.tile').forEach((t, i) => {
     spark(t.querySelector('canvas'), L[i].spark, '#ffffff');
     t.onclick = () => { st.stock = t.dataset.s; renderStocks(); loadChart('stock'); };
@@ -813,3 +830,4 @@ function demoHist(kind, sym, range) {
 tickClock(); setInterval(tickClock, 1000);
 go('home'); renderAll(); refresh(); schedule();
 document.fonts.ready.then(() => { document.querySelectorAll('.odo').forEach(o => o._wfs = null); renderAll(); });
+document.fonts && document.fonts.ready.then(() => fitPrices());

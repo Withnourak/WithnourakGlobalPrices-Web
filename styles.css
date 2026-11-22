@@ -4,6 +4,11 @@
 @font-face{font-family:'DIN';font-weight:100 600;font-display:swap;src:url(fonts/cairo-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
 @font-face{font-family:'DIN';font-weight:700;font-display:swap;src:url(fonts/cairo-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
 @font-face{font-family:'DIN';font-weight:800 900;font-display:swap;src:url(fonts/cairo-latin-900-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'DIN';font-weight:700;font-display:block;ascent-override:88%;descent-override:28%;line-gap-override:0%;src:url(fonts/cairo-arabic-700-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:'DIN';font-weight:800 900;font-display:block;ascent-override:88%;descent-override:28%;line-gap-override:0%;src:url(fonts/cairo-arabic-900-normal.woff2) format('woff2');unicode-range:U+0600-06FF,U+0750-077F,U+FB50-FDFF,U+FE70-FEFF}
+@font-face{font-family:'DIN';font-weight:100 600;font-display:block;ascent-override:88%;descent-override:28%;line-gap-override:0%;src:url(fonts/cairo-latin-500-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'DIN';font-weight:700;font-display:block;ascent-override:88%;descent-override:28%;line-gap-override:0%;src:url(fonts/cairo-latin-700-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
+@font-face{font-family:'DIN';font-weight:800 900;font-display:block;ascent-override:88%;descent-override:28%;line-gap-override:0%;src:url(fonts/cairo-latin-900-normal.woff2) format('woff2');unicode-range:U+0000-00FF,U+2000-206F,U+20AC}
 /* ================= الخطوط ================= */
 
 :root{
@@ -797,3 +802,28 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .movers .tile .cname{font-size:12px;line-height:1.15}
 .movers .heat.big .tile .t-prices{margin-top:2px}
 .home-grid{grid-template-rows:minmax(0,1.08fr) minmax(0,.94fr) minmax(0,1.18fr)!important}
+
+/* ===== v3.3: خط Cairo المجاني + بطاقات أسهم بشعار كبير وأرقام كبيرة ===== */
+#homeHeat .tile.v3,#skHeat .tile.v3{display:grid!important;grid-template-rows:auto minmax(0,1fr) auto;gap:6px;padding:10px 14px 12px!important;justify-content:stretch!important}
+#homeHeat .tile.v3>*,#skHeat .tile.v3>*{position:relative;z-index:1}
+#homeHeat .tile.v3>canvas,#skHeat .tile.v3>canvas{position:absolute;z-index:0}
+.tile.v3 .v3-top{display:flex;align-items:center;justify-content:space-between;gap:8px;min-width:0}
+.tile.v3 .v3-top .cname{flex:1;min-width:0;width:auto;text-align:start;font-size:17px!important;font-weight:800;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tile.v3 .v3-top .pc{font-size:17px!important;padding:3px 9px;border-radius:9px;background:rgba(0,0,0,.28)}
+.tile.v3 .v3-logo{display:flex;align-items:center;justify-content:center;min-height:0}
+#homeHeat .tile.v3 .logo-chip.brand,#skHeat .tile.v3 .logo-chip.brand{width:min(100%,190px)!important;height:100%!important;max-height:84px;min-height:46px;padding:7px 14px!important;border-radius:14px;background:#fff;box-shadow:0 4px 16px rgba(0,0,0,.45)}
+#homeHeat .tile.v3 .logo-chip.brand.letter,#skHeat .tile.v3 .logo-chip.brand.letter{background:linear-gradient(145deg,#2a2a3a,#15151f)}
+#homeHeat .tile.v3 .logo-chip.brand.letter::after,#skHeat .tile.v3 .logo-chip.brand.letter::after{font-size:26px}
+#homeHeat .tile.v3 .t-prices,#skHeat .tile.v3 .t-prices{margin:0!important;display:flex!important;justify-content:space-between!important;align-items:baseline;gap:14px;font-size:28px;line-height:1.1;overflow:visible}
+#homeHeat .tile.v3 .t-prices .pr,#homeHeat .tile.v3 .t-prices .aedp,#skHeat .tile.v3 .t-prices .pr,#skHeat .tile.v3 .t-prices .aedp{font-family:'InterNum',var(--num)!important;font-size:1em!important;font-weight:800;overflow:visible!important;text-overflow:clip!important;max-width:none!important;flex:none}
+#homeHeat .tile.v3 .t-prices .aedp .dh,#skHeat .tile.v3 .t-prices .aedp .dh{width:.78em;height:.78em}
+#skHeat{overflow-y:auto;grid-auto-rows:minmax(150px,1fr)!important;gap:10px!important}
+#homeHeat{gap:10px!important}
+.home-grid{grid-template-rows:minmax(0,.98fr) minmax(0,.8fr) minmax(0,1.55fr)!important}
+.movers{padding-top:10px!important;padding-bottom:10px!important}
+#homeHeat .tile.v3{padding:8px 12px 10px!important;gap:4px}
+#homeHeat .tile.v3 .logo-chip.brand{min-height:38px;max-height:70px}
+.home-grid{grid-template-rows:minmax(0,1.06fr) minmax(0,.92fr) minmax(0,1.28fr)!important}
+#homeHeat .tile.v3 .v3-top .cname,#homeHeat .tile.v3 .v3-top .pc{font-size:15px!important}
+#homeHeat .tile.v3 .v3-top .pc{padding:1px 8px}
+#homeHeat .tile.v3 .logo-chip.brand{min-height:32px;padding:5px 12px!important}
