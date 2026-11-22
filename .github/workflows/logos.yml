@@ -1,0 +1,24 @@
+name: Fetch UAE stock logos
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/logos.yml']
+permissions:
+  contents: write
+jobs:
+  logos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download TradingView logos
+        run: |
+          mkdir -p logos
+          T='["ADX:FAB","ADX:IHC","ADX:ALDAR","ADX:ADCB","ADX:ADIB","ADX:ADNOCGAS","ADX:ADNOCDRILL","ADX:ALPHADHABI","ADX:ADPORTS","DFM:EMAAR","DFM:EMIRATESNBD","DFM:DIB","DFM:DEWA","DFM:SALIK","DFM:DU","DFM:AIRARABIA","DFM:EMAARDEV"]'
+          curl -s -X POST https://scanner.tradingview.com/uae/scan -H 'Content-Type: text/plain' -d "{\"symbols\":{\"tickers\":$T},\"columns\":[\"logoid\"]}" > /tmp/r.json
+          jq -r '.data[] | "\(.s) \(.d[0])"' /tmp/r.json | while read s id; do f="logos/$(echo $s | tr ':' '_').svg"; curl -sf "https://s3-symbol-logo.tradingview.com/${id}--big.svg" -o "$f" || curl -sf "https://s3-symbol-logo.tradingview.com/${id}.svg" -o "$f"; done
+          ls -la logos
+      - name: Commit
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add logos; git diff --cached --quiet || git commit -m "Add UAE stock logos"
+          git pull --rebase -q; git push
