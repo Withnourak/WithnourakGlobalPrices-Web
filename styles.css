@@ -764,3 +764,36 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .side-logo img{width:100%;max-width:200px;max-height:290px;object-fit:contain;filter:drop-shadow(0 6px 18px rgba(242,199,92,.22))}
 .nav{margin-top:0}
 @media (max-width:1500px){.side-logo img{max-width:78px}}
+/* ===== أسعار الأسهم: الدولار يميناً والدرهم يساراً بخط Inter كبير وواضح ===== */
+@font-face{font-family:'InterNum';font-weight:600;src:url(fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'InterNum';font-weight:700;src:url(fonts/inter-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'InterNum';font-weight:800;src:url(fonts/inter-latin-800-normal.woff2) format('woff2')}
+.tile .t-prices{justify-content:space-between!important;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:nowrap}
+.tile .t-prices .pr,.tile .t-prices .aedp{font-family:'InterNum',var(--num)!important;font-variant-numeric:tabular-nums;font-weight:800;letter-spacing:-.01em;margin:0!important;white-space:nowrap;line-height:1.1;text-shadow:0 2px 8px rgba(0,0,0,.55)}
+.tile .t-prices .pr{color:#fff;font-size:24px!important}
+.tile .t-prices .aedp{color:#9fd6ff!important;font-size:24px!important;display:inline-flex!important;align-items:center;gap:3px}
+.tile .t-prices .aedp .dh{width:.8em;height:.8em;--dhc:#9fd6ff}
+.movers .heat.big .tile .t-prices .pr,.movers .heat.big .tile .t-prices .aedp{font-size:22px!important}
+.tile .pc{font-family:'InterNum',var(--num)!important;font-weight:800}
+.heat.big .tile{justify-content:space-between!important}
+@media (max-height:900px){.tile .t-prices .pr,.tile .t-prices .aedp,.movers .heat.big .tile .t-prices .pr,.movers .heat.big .tile .t-prices .aedp{font-size:18px!important}}
+/* تبويبات الأسواق */
+.mkt-tabs{display:flex;gap:4px;padding:4px;border-radius:14px;background:rgba(0,0,0,.35);border:1px solid var(--line)}
+.mkt-tabs button{border:0;background:none;padding:7px 14px;border-radius:10px;font-size:15px;font-weight:800;color:var(--dim);white-space:nowrap}
+.mkt-tabs button.on{background:linear-gradient(180deg,var(--g1),var(--g2) 50%,var(--g3));color:#1b1204}
+.movers .cc-head{flex-wrap:nowrap}
+.heat .empty{grid-column:1/-1;display:grid;place-items:center;color:var(--dim);font-weight:700}
+/* شعارات أوضح وأكبر */
+.tile .logo-chip.brand{width:120px!important;height:58px!important;padding:6px 12px!important;border-radius:14px;background:#fff;box-shadow:0 4px 14px rgba(0,0,0,.45)}
+.movers .heat.big .tile .logo-chip.brand{width:108px!important;height:48px!important}
+.tile .brandbox{width:120px!important}
+.movers .tile .brandbox{width:108px!important}
+.tile .logo-chip.brand img{image-rendering:auto;filter:contrast(1.05)}
+.tile .cname{font-size:14px}
+.home-grid{grid-template-rows:minmax(0,1fr) minmax(0,.92fr) minmax(0,1.3fr)!important}
+.movers .heat.big .tile{padding:6px 12px!important;gap:2px}
+.movers .heat.big .tile .logo-chip.brand{width:104px!important;height:40px!important;padding:4px 10px!important}
+.movers .tile .brandbox{width:104px!important;gap:2px}
+.movers .tile .cname{font-size:12px;line-height:1.15}
+.movers .heat.big .tile .t-prices{margin-top:2px}
+.home-grid{grid-template-rows:minmax(0,1.08fr) minmax(0,.94fr) minmax(0,1.18fr)!important}

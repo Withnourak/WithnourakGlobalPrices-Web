@@ -1,6 +1,6 @@
 // يجلب بيانات Yahoo Finance (الأسهم والنحاس وسجل الأسعار) على خوادم GitHub وينشرها مع الموقع
 import fs from 'fs';
-const SYMS = ['AAPL','MSFT','NVDA','GOOGL','AMZN','META','TSLA','TSM','AVGO','JPM','NFLX','XOM','BRK-B','V','MA','WMT','ORCL','AMD','INTC','KO','PEP','DIS','NKE','IBM','ADBE','CRM','PLTR','UBER','COIN','BABA','MCD','2222.SR','EMAAR.AE','FAB.AE','GC=F','SI=F','HG=F','BTC-USD'];
+const SYMS = ['AAPL','MSFT','NVDA','GOOGL','AMZN','META','TSLA','TSM','AVGO','JPM','NFLX','XOM','BRK-B','V','MA','WMT','ORCL','AMD','INTC','KO','PEP','DIS','NKE','IBM','ADBE','CRM','PLTR','UBER','COIN','BABA','MCD','2222.SR','EMAAR.AE','EMIRATESNBD.AE','DIB.AE','DEWA.AE','SALIK.AE','DU.AE','AIRARABIA.AE','EMAARDEV.AE','GC=F','SI=F','HG=F','BTC-USD'];
 const COMBOS = [['1d','5m'],['1d','15m'],['5d','30m'],['1mo','60m'],['1y','1d'],['5y','1wk'],['10y','1mo'],['max','1mo']];
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130 Safari/537.36';
 fs.mkdirSync('site/data/y', { recursive: true });

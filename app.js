@@ -13,12 +13,19 @@ const FX_NAMES = {
   MAD: ['درهم مغربي', '🇲🇦'], SGD: ['دولار سنغافوري', '🇸🇬'], HKD: ['دولار هونغ كونغ', '🇭🇰'], KRW: ['وون كوري', '🇰🇷'], LBP: ['ليرة لبنانية', '🇱🇧']
 };
 const STOCK_NAMES = {
+  'ADX:FAB': 'بنك أبوظبي الأول', 'ADX:IHC': 'العالمية القابضة', 'ADX:ALDAR': 'الدار العقارية', 'ADX:ADCB': 'بنك أبوظبي التجاري', 'ADX:ADIB': 'مصرف أبوظبي الإسلامي',
+  'ADX:ADNOCGAS': 'أدنوك للغاز', 'ADX:ADNOCDRILL': 'أدنوك للحفر', 'ADX:ALPHADHABI': 'ألفا ظبي', 'ADX:ADPORTS': 'موانئ أبوظبي',
+  'DFM:EMAAR': 'إعمار العقارية', 'DFM:EMIRATESNBD': 'الإمارات دبي الوطني', 'DFM:DIB': 'بنك دبي الإسلامي', 'DFM:DEWA': 'هيئة كهرباء ومياه دبي', 'DFM:SALIK': 'سالك',
+  'DFM:DU': 'دو', 'DFM:AIRARABIA': 'العربية للطيران', 'DFM:EMAARDEV': 'إعمار للتطوير',
   AAPL: 'أبل', MSFT: 'مايكروسوفت', NVDA: 'إنفيديا', GOOGL: 'ألفابت (جوجل)', AMZN: 'أمازون', META: 'ميتا', TSLA: 'تسلا', 'BRK-B': 'بيركشاير',
   JPM: 'جي بي مورغان', V: 'فيزا', TSM: 'TSMC', AVGO: 'برودكوم', NFLX: 'نتفليكس', AMD: 'AMD', XOM: 'إكسون موبيل', ORCL: 'أوراكل', WMT: 'وول مارت',
   '2222.SR': 'أرامكو', 'EMAAR.AE': 'إعمار', 'FAB.AE': 'بنك أبوظبي الأول', 'ADNOCGAS.AE': 'أدنوك للغاز'
 };
 // شعارات الشركات: تُحمَّل مباشرة من الإنترنت مع بدائل تلقائية
 const DOMAINS = {
+  'ADX:FAB': 'bankfab.com', 'ADX:IHC': 'ihcuae.com', 'ADX:ALDAR': 'aldar.com', 'ADX:ADCB': 'adcb.com', 'ADX:ADIB': 'adib.ae', 'ADX:ADNOCGAS': 'adnocgas.ae',
+  'ADX:ADNOCDRILL': 'adnocdrilling.ae', 'ADX:ALPHADHABI': 'alphadhabi.com', 'ADX:ADPORTS': 'adportsgroup.com', 'DFM:EMAAR': 'emaar.com', 'DFM:EMIRATESNBD': 'emiratesnbd.com',
+  'DFM:DIB': 'dib.ae', 'DFM:DEWA': 'dewa.gov.ae', 'DFM:SALIK': 'salik.ae', 'DFM:DU': 'du.ae', 'DFM:AIRARABIA': 'airarabia.com', 'DFM:EMAARDEV': 'emaardevelopment.ae',
   AAPL: 'apple.com', MSFT: 'microsoft.com', NVDA: 'nvidia.com', GOOGL: 'google.com', GOOG: 'google.com', AMZN: 'amazon.com', META: 'meta.com',
   TSLA: 'tesla.com', 'BRK-B': 'berkshirehathaway.com', JPM: 'jpmorganchase.com', V: 'visa.com', MA: 'mastercard.com', TSM: 'tsmc.com',
   AVGO: 'broadcom.com', NFLX: 'netflix.com', AMD: 'amd.com', XOM: 'exxonmobil.com', ORCL: 'oracle.com', WMT: 'walmart.com', INTC: 'intel.com',
@@ -28,15 +35,16 @@ const DOMAINS = {
   'DEWA.AE': 'dewa.gov.ae', 'SALIK.AE': 'salik.ae', 'ETISALAT.AE': 'eand.com', '1120.SR': 'alrajhibank.com.sa', '2010.SR': 'sabic.com'
 };
 function logoSources(sym) {
+  if (sym.includes(':')) return DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : [];
   const base = sym.split('.')[0];
   const list = [`https://financialmodelingprep.com/image-stock/${encodeURIComponent(sym)}.png`];
   if (base !== sym) list.push(`https://financialmodelingprep.com/image-stock/${encodeURIComponent(base)}.png`);
-  if (DOMAINS[sym]) list.push(`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=128`);
+  if (DOMAINS[sym]) list.push(`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`);
   return list;
 }
 function logoHtml(sym, cls = '') {
   const src = logoSources(sym);
-  return `<span class="logo-chip ${cls}" data-letter="${cls.includes('brand') ? sym.replace(/\.[A-Z]+$/, '') : sym.replace(/[^A-Z0-9]/gi, '').slice(0, 2)}" title="${STOCK_NAMES[sym] || sym} · ${sym}"><img src="${src[0]}" data-alt="${src.slice(1).join('|')}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
+  return `<span class="logo-chip ${cls}" data-letter="${cls.includes('brand') ? sym.replace(/^[A-Z]+:/, '').replace(/\.[A-Z]+$/, '') : sym.replace(/[^A-Z0-9]/gi, '').slice(0, 2)}" title="${STOCK_NAMES[sym] || sym} · ${sym}"><img src="${src[0]}" data-alt="${src.slice(1).join('|')}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
 }
 // عند فشل تحميل شعار: جرّب المصدر التالي ثم اعرض أول حرفين
 document.addEventListener('error', e => {
@@ -369,7 +377,8 @@ async function loadChart(name) {
       const last = p.length ? p[p.length - 1][1] : 1;
       ch.set(p.map(q => [q[0], conv(q[1])]), { range: r, key: st.coin + r + cfg.cur, dec: last > 100 ? 0 : last > 1 ? 2 : 4, color: col });
     } else if (name === 'stock' && st.stock) {
-      const p = await getHist('stock', st.stock, r);
+      if (st.stock.startsWith('ADX:')) { ch.set([], { empty: 'الرسم البياني غير متاح لأسهم سوق أبوظبي (الأسعار الحالية فقط)', key: 'adx' + st.stock }); return; }
+      const p = await getHist('stock', st.stock.startsWith('DFM:') ? st.stock.slice(4) + '.AE' : st.stock, r);
       const q = (data.stocks || []).find(x => x.symbol === st.stock);
       const up = r === '1D' && q && q.changePct != null ? q.changePct >= 0 : p.length > 1 && p[p.length - 1][1] >= p[0][1];
       ch.set(p, { range: r, key: st.stock + r, dec: 2, color: up ? '#2fd07f' : '#ff5a67' });
@@ -493,22 +502,34 @@ function renderHome(live) {
     spark($('cuSpark'), c.spark, '#e0875a');
   }
   if (live) return;
-  const stx = (Array.isArray(data.stocks) ? data.stocks : []).filter(q => !q.error).slice(0, 12);
-  $('homeHeat').style.setProperty('--c', Math.min(6, Math.max(4, Math.ceil(stx.length / 2))));
+  const stx = marketList('home').slice(0, 12);
+  $('homeHeat').style.setProperty('--c', Math.min(6, Math.max(1, stx.length)));
   $('homeHeat').innerHTML = stx.map(q => tileHtml(q, true)).join('');
-  $('homeHeat').querySelectorAll('.tile').forEach((t, i) => { spark(t.querySelector('canvas'), stx[i].spark, '#ffffff'); t.onclick = () => { st.stock = t.dataset.s; go('stocks'); }; });
+  $('homeHeat').querySelectorAll('.tile').forEach((t, i) => { spark(t.querySelector('canvas'), stx[i].spark, '#ffffff'); t.onclick = () => { st.stock = t.dataset.s; mkt.stocks = mkt.home; document.querySelectorAll('.mkt-tabs[data-mt=stocks] button').forEach(x => x.classList.toggle('on', x.dataset.m === mkt.stocks)); go('stocks'); }; });
 }
+// اختيار السوق: العالمية أو أبوظبي أو دبي
+const mkt = { home: 'global', stocks: 'global' };
+function marketList(which) {
+  if (mkt[which] === 'global') return (Array.isArray(data.stocks) ? data.stocks : []).filter(q => !q.error);
+  return (Array.isArray(data.uae) ? data.uae : []).filter(q => q.market === mkt[which]);
+}
+document.querySelectorAll('.mkt-tabs').forEach(g => g.addEventListener('click', e => {
+  const b = e.target.closest('button'); if (!b) return; e.stopPropagation();
+  mkt[g.dataset.mt] = b.dataset.m; g.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+  g.dataset.mt === 'home' ? renderHome() : (renderStocks(), loadChart('stock'));
+}));
 function tileHtml(q, big) {
   const p = q.changePct || 0, a = Math.min(Math.abs(p) / 3, 1);
   const bg = p >= 0 ? `linear-gradient(155deg,rgba(47,208,127,${.12 + a * .45}),rgba(20,80,50,${.15 + a * .3}))` : `linear-gradient(155deg,rgba(255,90,103,${.12 + a * .45}),rgba(90,20,30,${.15 + a * .3}))`;
-  const usd = q.currency && q.currency !== 'USD' ? fmt(q.price) + ' ' + q.currency : '$' + fmt(q.price);
-  const aedLine = q.currency && q.currency !== 'USD' ? '' : `<div class="aedp">${DH}${fmt(q.price * aed())}</div>`;
+  const cur = q.currency || 'USD';
+  const inUsd = cur === 'USD' ? q.price : cur === 'AED' ? q.price / aed() : null;
+  const usd = inUsd == null ? fmt(q.price) + ' ' + cur : '$' + fmt(inUsd);
+  const aedLine = inUsd == null ? '' : `<div class="aedp">${DH}${fmt(cur === 'AED' ? q.price : q.price * aed())}</div>`;
   // تخطيط بصفوف ثابتة: لا يتداخل الشعار أو النسبة مع الأسعار
   return `<div class="tile ${st.stock === q.symbol && big ? 'sel' : ''}" data-s="${q.symbol}" style="background:${bg}">
     ${big ? '<canvas></canvas>' : ''}
     <div class="t-row t-top"><div class="brandbox"><div class="cname">${STOCK_NAMES[q.symbol] || q.name || q.symbol}</div>${logoHtml(q.symbol, 'brand')}</div><div class="pc ${p >= 0 ? 'up' : 'down'}">${p >= 0 ? '▲ +' : '▼ '}${fmt(p)}%</div></div>
-    <div class="t-row"><div class="pr">${usd}</div></div>
-    <div class="t-row">${aedLine}</div></div>`;
+    <div class="t-row t-prices"><div class="pr">${usd}</div>${aedLine}</div></div>`;
 }
 
 function renderGold() {
@@ -600,14 +621,15 @@ function renderCrypto() {
 }
 
 function renderStocks() {
-  const L = (Array.isArray(data.stocks) ? data.stocks : []).filter(q => !q.error);
-  if (!L.length) return;
+  const L = marketList('stocks');
+  if (!L.length) { $('skHeat').innerHTML = '<div class="empty">جارٍ تحميل أسعار هذا السوق…</div>'; return; }
   if (!st.stock || !L.find(q => q.symbol === st.stock)) st.stock = L[0].symbol;
   const q = L.find(x => x.symbol === st.stock);
   $('skName').textContent = `${STOCK_NAMES[q.symbol] || q.name} · ${q.symbol}`;
   if ($('skLogo')._s !== q.symbol) { $('skLogo')._s = q.symbol; $('skLogo').outerHTML = logoHtml(q.symbol, 'lg').replace('<span class="logo-chip', '<span id="skLogo" class="logo-chip'); }
-  odo($('skBig'), fmt(q.price), q.price); delta($('skDelta'), q.changePct);
-  $('skDual').innerHTML = q.currency && q.currency !== 'USD' ? '' : `<b>${DH}${fmt(q.price * aed())}</b><small>درهم</small>`;
+  const isAed = q.currency === 'AED';
+  odo($('skBig'), fmt(isAed ? q.price / aed() : q.price), q.price); delta($('skDelta'), q.changePct);
+  $('skDual').innerHTML = q.currency && !['USD', 'AED'].includes(q.currency) ? '' : `<b>${DH}${fmt(isAed ? q.price : q.price * aed())}</b><small>درهم</small>`;
   const h = $('skHeat'); h.style.setProperty('--c', Math.min(8, Math.max(4, Math.ceil(L.length / 2))));
   h.innerHTML = L.map(x => tileHtml(x, true)).join('');
   h.querySelectorAll('.tile').forEach((t, i) => {

@@ -1,12 +1,11 @@
-// نسخة الموبايل: نفس محرك جلب الأسعار في نسخة سطح المكتب، يعمل مباشرة داخل التطبيق
-// (CapacitorHttp يمرّر الطلبات عبر النظام فلا توجد قيود CORS)
+// نسخة الموبايل والمتصفح: نفس محرك جلب الأسعار في نسخة سطح المكتب (مولّد تلقائياً من main.js)
 (function () {
 'use strict';
 const HANDLERS = {};
 const _fetch = window.fetch.bind(window);
 const PROXIES = [u => 'https://corsproxy.io/?url=' + encodeURIComponent(u), u => 'https://api.allorigins.win/raw?url=' + encodeURIComponent(u)];
 const fetch = async (u, o = {}) => {
-  const opts = { signal: o.signal };
+  const opts = Object.assign({}, o); delete opts.headers;
   // بيانات Yahoo تُجلب على خوادم GitHub وتُنشر مع الموقع كل 10 دقائق
   const y = u.match(/finance.yahoo.com/v8/finance/chart/([^?]+)?range=([^&]+)&interval=([^&]+)/);
   if (y) { const r = await _fetch('data/y/' + encodeURIComponent(decodeURIComponent(y[1])) + '_' + y[2] + '_' + y[3] + '.json?t=' + Math.floor(Date.now() / 300000), opts); if (r.ok) return r; throw new Error('no data'); }
@@ -92,6 +91,20 @@ async function metal(code, yahooSym) {
     changePct = y.changePct; spark = y.spark;
   } catch (_) {}
   return { ...spot, changePct, spark, perGram: spot.price / OZ_TO_GRAM };
+}
+
+// ---------- الأسهم الإماراتية: سوق أبوظبي (ADX) وسوق دبي (DFM) عبر TradingView ----------
+const UAE_TICKERS = ['ADX:FAB','ADX:IHC','ADX:ALDAR','ADX:ADCB','ADX:ADIB','ADX:ADNOCGAS','ADX:ADNOCDRILL','ADX:ALPHADHABI','ADX:ADPORTS',
+  'DFM:EMAAR','DFM:EMIRATESNBD','DFM:DIB','DFM:DEWA','DFM:SALIK','DFM:DU','DFM:AIRARABIA','DFM:EMAARDEV'];
+async function uaeStocks() {
+  const ctrl = new AbortController(); const t = setTimeout(() => ctrl.abort(), 10000);
+  try {
+    const res = await fetch('https://scanner.tradingview.com/uae/scan', { method: 'POST', signal: ctrl.signal, headers: { 'Content-Type': 'text/plain' },
+      body: JSON.stringify({ symbols: { tickers: UAE_TICKERS }, columns: ['name', 'description', 'close', 'change', 'currency', 'high', 'low'] }) });
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    return j.data.map(r => ({ symbol: r.s, market: r.s.split(':')[0], price: r.d[2], changePct: r.d[3], name: r.d[1], currency: r.d[4] || 'AED', high: r.d[5], low: r.d[6], spark: [], source: 'TradingView' }));
+  } finally { clearTimeout(t); }
 }
 
 // ---------- النحاس (COMEX، السعر بالدولار للرطل) ----------
@@ -200,11 +213,11 @@ async function stocks(symbols) {
 HANDLERS['fetch-all'] = async (_e, opts) => {
   const symbols = (opts && opts.stocks) || [];
   const cl = (opts && opts.crypto) || ['BTC', 'ETH'];
-  const [gold, silver, cr, rates, stk, cu] = await Promise.allSettled([
-    metal('XAU', 'GC=F'), metal('XAG', 'SI=F'), cryptos(cl), fx(), stocks(symbols), copper()
+  const [gold, silver, cr, rates, stk, cu, uae] = await Promise.allSettled([
+    metal('XAU', 'GC=F'), metal('XAG', 'SI=F'), cryptos(cl), fx(), stocks(symbols), copper(), uaeStocks()
   ]);
   const pick = r => r.status === 'fulfilled' ? r.value : { error: String(r.reason && r.reason.message || r.reason) };
-  return { gold: pick(gold), silver: pick(silver), crypto: pick(cr), fx: pick(rates), stocks: pick(stk), copper: pick(cu), at: Date.now() };
+  return { gold: pick(gold), silver: pick(silver), crypto: pick(cr), fx: pick(rates), stocks: pick(stk), copper: pick(cu), uae: pick(uae), at: Date.now() };
 };
 
 // تحديث سريع للذهب والفضة (السعر الفوري فقط) لاستخدامه كل بضع ثوانٍ
