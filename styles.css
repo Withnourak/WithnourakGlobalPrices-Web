@@ -828,3 +828,8 @@ input,textarea{user-select:text;-webkit-user-select:text}
 #homeHeat .tile.v3 .v3-top .pc{padding:1px 8px}
 #homeHeat .tile.v3 .logo-chip.brand{min-height:32px;padding:5px 12px!important}
 #homeHeat .tile.v3 .logo-chip.brand img,#skHeat .tile.v3 .logo-chip.brand img{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;object-fit:contain}
+/* شعارات أسواق الإمارات (مربعة من TradingView) */
+#homeHeat .tile.v3 .logo-chip.brand.sq,#skHeat .tile.v3 .logo-chip.brand.sq{width:auto!important;aspect-ratio:1;height:100%!important;max-height:92px;min-height:48px;padding:0!important;border-radius:16px;overflow:hidden;background:#F0F3FA}
+#homeHeat .tile.v3 .logo-chip.brand.sq img,#skHeat .tile.v3 .logo-chip.brand.sq img{transform:scale(1.18);object-fit:cover}
+.logo-chip.lg.sq{padding:0!important;overflow:hidden}
+.logo-chip.lg.sq img{width:100%!important;height:100%!important;transform:scale(1.18)}

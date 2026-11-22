@@ -37,7 +37,7 @@ const DOMAINS = {
 function logoSources(sym) {
   if (sym.includes(':')) {
     const q = ((data && data.uae) || []).find(x => x.symbol === sym), tv = q && q.logoid ? [`https://s3-symbol-logo.tradingview.com/${q.logoid}--big.svg`, `https://s3-symbol-logo.tradingview.com/${q.logoid}.svg`] : [];
-    return tv.concat(DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : []);
+    return [`logos/${sym.replace(':', '_')}.svg`].concat(tv, DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : []);
   }
   if (false) return DOMAINS[sym] ? [`https://www.google.com/s2/favicons?domain=${DOMAINS[sym]}&sz=256`, `https://icons.duckduckgo.com/ip3/${DOMAINS[sym]}.ico`] : [];
   const base = sym.split('.')[0];
@@ -48,7 +48,7 @@ function logoSources(sym) {
 }
 function logoHtml(sym, cls = '') {
   const src = logoSources(sym);
-  return `<span class="logo-chip ${cls}" data-letter="${cls.includes('brand') ? sym.replace(/^[A-Z]+:/, '').replace(/\.[A-Z]+$/, '') : sym.replace(/[^A-Z0-9]/gi, '').slice(0, 2)}" title="${STOCK_NAMES[sym] || sym} · ${sym}"><img src="${src[0]}" data-alt="${src.slice(1).join('|')}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
+  return `<span class="logo-chip ${cls}${src[0] && src[0].startsWith('logos/') ? ' sq' : ''}" data-letter="${cls.includes('brand') ? sym.replace(/^[A-Z]+:/, '').replace(/\.[A-Z]+$/, '') : sym.replace(/[^A-Z0-9]/gi, '').slice(0, 2)}" title="${STOCK_NAMES[sym] || sym} · ${sym}"><img src="${src[0]}" data-alt="${src.slice(1).join('|')}" alt="" loading="lazy" referrerpolicy="no-referrer"></span>`;
 }
 // عند فشل تحميل شعار: جرّب المصدر التالي ثم اعرض أول حرفين
 document.addEventListener('error', e => {
