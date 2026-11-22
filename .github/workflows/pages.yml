@@ -25,7 +25,7 @@ jobs:
           rm -f site/scripts
           node scripts/fetch-data.mjs
       - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v3
+      - uses: actions/upload-pages-artifact@v4
         with: { path: site }
       - id: d
         uses: actions/deploy-pages@v4
