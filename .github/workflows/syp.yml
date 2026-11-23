@@ -1,0 +1,31 @@
+name: Syrian pound rate (sp-today)
+# 3 طلبات يومياً فقط لتبقى ضمن حد الخطة المجانية (100 طلب شهرياً)
+on:
+  schedule:
+    - cron: '17 3,11,19 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: downloads }
+      - name: Fetch rate
+        env:
+          KEY: ${{ secrets.SPTODAY_KEY }}
+        run: |
+          if [ -z "$KEY" ]; then echo "SPTODAY_KEY secret is not set"; exit 0; fi
+          code=$(curl -s -o r.json -w '%{http_code}' "https://api-v2.sp-today.com/api/v1/currencies?api_key=$KEY")
+          echo "HTTP $code"; head -c 300 r.json; echo
+          if [ "$code" != "200" ]; then echo "keeping previous syp.json"; exit 0; fi
+          jq '.data as $d | ($d.currencies[] | select(.code=="USD") | .cities.damascus) as $c
+              | (if $d.unit=="old" then 100 else 1 end) as $k
+              | {buy: ($c.buy/$k), sell: ($c.sell/$k), changePct: ($c.change // 0), updated: $d.updated_at, source: "sp-today.com"}' r.json > syp.new
+          jq -e '.buy > 0' syp.new && mv syp.new syp.json && cat syp.json
+      - name: Commit
+        run: |
+          git config user.name "github-actions"; git config user.email "actions@github.com"
+          git add syp.json; git diff --cached --quiet && exit 0
+          git commit -m "Syrian pound rate update"; git pull --rebase -q; git push
