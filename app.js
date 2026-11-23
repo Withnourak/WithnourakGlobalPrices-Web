@@ -94,7 +94,11 @@ const fmt = (v, d = 2) => (v == null || !isFinite(v)) ? '—' : Number(v).toLoca
 const fmtAuto = v => v == null ? '—' : v >= 1000 ? fmt(v, 2) : v >= 1 ? fmt(v, 4) : fmt(v, 5);
 const aed = () => (data && data.fx && data.fx.rates && data.fx.rates.AED) || 3.6725;
 // سعر الليرة السورية الجديدة: يحدده المستخدم (سوق موازٍ أو نشرة المصرف المركزي)
-const syp = () => cfg.sypMode === 'official' ? (+cfg.sypOfficial || 122) : (+cfg.sypMarket || 150.5);
+if (!cfg.syp3) { cfg.sypMode = 'live'; cfg.syp3 = true; store.set('cfg2', cfg); }
+// live: السعر اللحظي من sp-today (سعر الشراء)، وإن تعذّر نستخدم آخر سعر محفوظ
+let sypCache = null;
+const sypLive = () => sypCache || (data && data.syp && data.syp.buy > 0 ? data.syp.buy : null);
+const syp = () => cfg.sypMode === 'official' ? (+cfg.sypOfficial || 122) : cfg.sypMode === 'live' ? (sypLive() || +cfg.sypMarket || 150.5) : (+cfg.sypMarket || 150.5);
 const rateOf = c => c === 'AED' ? aed() : c === 'SYP' ? syp() : 1;
 const conv = usd => usd * rateOf(cfg.cur);
 const fmtC = (v, d = 2) => fmt(v, cfg.cur === 'SYP' ? 0 : d);
@@ -600,7 +604,7 @@ function renderFx() {
   odo($('usdAed2'), fmt(r.AED, 4));
   $('fxSrc').textContent = 'المصدر: ' + f.source;
   $('fxTiles').innerHTML = cfg.fx.filter(c => r[c]).map(c => {
-    const v = r.AED / r[c]; let [n, fl] = FX_NAMES[c] || [c, '🏳']; if (c === 'SYP') { fl = FLAG_SY; n = 'ليرة سورية · ' + (cfg.sypMode === 'official' ? 'المصرف المركزي' : 'السوق'); }
+    const v = r.AED / r[c]; let [n, fl] = FX_NAMES[c] || [c, '🏳']; if (c === 'SYP') { fl = FLAG_SY; n = 'ليرة سورية · ' + (cfg.sypMode === 'official' ? 'المصرف المركزي' : cfg.sypMode === 'live' ? 'sp-today' : 'السوق'); }
     // التغيّر: قيمة العملة مقابل الدرهم اليوم مقارنة بالأمس
     const fc = f.prev && f.cur && f.prev[c] && f.cur[c] ? ((3.6725 / f.cur[c]) / (3.6725 / f.prev[c]) - 1) * 100 : null;
     const bd = fc == null ? '' : badge(Math.abs(fc) < 0.005 ? 0 : fc, 1);
@@ -675,7 +679,11 @@ async function refresh() {
     if (!['gold', 'silver', 'crypto', 'fx'].some(k => ok(fresh[k]))) throw new Error('offline');
     if (data) ['gold', 'silver', 'crypto', 'fx', 'stocks', 'copper'].forEach(k => { if (fresh[k] && fresh[k].error && ok(data[k])) fresh[k] = data[k]; });
     // الليرة السورية الجديدة = 100 ليرة قديمة: إذا أعاد المصدر السعر القديم نحوّله
+    if (!ok(fresh.syp) && data && ok(data.syp)) fresh.syp = data.syp;
+    if (ok(fresh.syp) && fresh.syp.buy > 0) sypCache = fresh.syp.buy;
     if (ok(fresh.fx)) ['rates', 'prev', 'cur'].forEach(k => { const r = fresh.fx[k]; if (r) r.SYP = syp(); });
+    // التغير اليومي لليرة من sp-today
+    if (ok(fresh.fx) && fresh.fx.prev && cfg.sypMode === 'live' && ok(fresh.syp) && fresh.syp.changePct) fresh.fx.prev.SYP = syp() / (1 + fresh.syp.changePct / 100);
     const first = !data;
     // احتفظ بأحدث أسعار البث اللحظي للعملات الرقمية
     if (data && Array.isArray(data.crypto) && Array.isArray(fresh.crypto)) fresh.crypto.forEach(c => { const o = data.crypto.find(x => x.symbol === c.symbol); if (o && o._live && Date.now() - o._live < 10000) Object.assign(c, { price: o.price, changePct: o.changePct, high: o.high, low: o.low, _live: o._live }); });
@@ -831,3 +839,59 @@ tickClock(); setInterval(tickClock, 1000);
 go('home'); renderAll(); refresh(); schedule();
 document.fonts.ready.then(() => { document.querySelectorAll('.odo').forEach(o => o._wfs = null); renderAll(); });
 document.fonts && document.fonts.ready.then(() => fitPrices());
+
+/* ===== التحديث من داخل البرنامج ===== */
+const UPD_URL = 'https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/latest.json';
+const CAP = window.Capacitor && window.Capacitor.isNativePlatform && window.Capacitor.isNativePlatform() ? window.Capacitor.getPlatform() : null;
+const IS_DESKTOP = !!(window.api && window.api.updateInstall);
+const IS_WEB = !IS_DESKTOP && !CAP;
+const verCmp = (a, b) => { const x = String(a).split('.').map(Number), y = String(b).split('.').map(Number); for (let i = 0; i < 3; i++) { if ((x[i] || 0) !== (y[i] || 0)) return (x[i] || 0) - (y[i] || 0); } return 0; };
+let updInfo = null, updBusy = false;
+function updMsg(t, cls) { const m = $('updMsg'); if (m) { m.innerHTML = t; m.className = 'upd-msg ' + (cls || ''); } }
+function updBar(p) { const b = $('updBar'); if (!b) return; b.classList.toggle('on', p != null); b.firstElementChild.style.width = Math.round((p || 0) * 100) + '%'; }
+async function curVersion() { try { if (IS_DESKTOP && window.api.appVersion) return await window.api.appVersion(); } catch (_) {} return window.APP_VERSION || '0'; }
+async function fetchManifest() {
+  if (IS_DESKTOP) return window.api.updateCheck();
+  const r = await fetch(UPD_URL + '?t=' + Date.now(), { cache: 'no-store' });
+  return r.json();
+}
+async function checkUpdate(silent) {
+  if (updBusy) return; const btn = $('updBtn');
+  const cur = await curVersion(); if ($('updCur')) $('updCur').textContent = cur;
+  if (!silent) { updMsg('جارٍ التحقق من آخر نسخة…'); btn.disabled = true; }
+  try {
+    updInfo = await fetchManifest();
+    const newer = verCmp(updInfo.version, cur) > 0;
+    if (!newer) { if (!silent) updMsg('✓ لديك أحدث نسخة (' + cur + ')', 'ok'); btn.textContent = '⟳ التحقق من التحديثات'; btn.dataset.act = ''; }
+    else {
+      updMsg('تتوفر نسخة جديدة: <b class="num">' + updInfo.version + '</b>' + (updInfo.notes ? '<br><small>' + updInfo.notes + '</small>' : ''), 'new');
+      btn.textContent = '⬇ تحديث الآن إلى ' + updInfo.version; btn.dataset.act = 'install';
+      $('btnSettings')?.classList.add('has-upd');
+    }
+  } catch (e) { if (!silent) updMsg('تعذّر الاتصال بخادم التحديث، تأكد من الإنترنت وحاول مجدداً', 'err'); }
+  btn.disabled = false;
+}
+async function installUpdate() {
+  if (updBusy || !updInfo) return; updBusy = true; const btn = $('updBtn'); btn.disabled = true;
+  try {
+    if (IS_WEB) { updMsg('جارٍ تحميل النسخة الجديدة…'); location.replace(location.pathname + '?v=' + updInfo.version + '-' + Date.now()); return; }
+    if (IS_DESKTOP) {
+      updMsg('جارٍ تنزيل النسخة ' + updInfo.version + '… سيُغلق البرنامج ويُعاد فتحه تلقائياً بعد التثبيت');
+      window.api.onUpdateProgress(p => { updBar(p); btn.textContent = 'جارٍ التنزيل ' + Math.round(p * 100) + '%'; });
+      updBar(0); await window.api.updateInstall();
+      updMsg('✓ اكتمل التنزيل، جارٍ التثبيت…', 'ok'); return;
+    }
+    const f = updInfo.files && updInfo.files[CAP];
+    if (!f) throw new Error('no file');
+    if (CAP === 'android') updMsg('سيُنزَّل ملف التحديث عبر المتصفح، افتحه ثم اضغط «تحديث» — لا حاجة لحذف التطبيق', 'new');
+    else updMsg('سيُنزَّل ملف الآيفون؛ ثبّته عبر Sideloadly فوق النسخة الحالية دون حذفها', 'new');
+    location.href = f.parts[0];
+  } catch (e) { updMsg('تعذّر التحديث: ' + (e && e.message ? e.message : e) + ' — حاول مجدداً', 'err'); updBar(null); }
+  updBusy = false; btn.disabled = false;
+}
+document.addEventListener('click', ev => {
+  const b = ev.target.closest('#updBtn'); if (!b) return;
+  if (b.dataset.act === 'install') installUpdate(); else checkUpdate(false);
+});
+setTimeout(() => checkUpdate(true), 8000);
+$('btnSettings')?.addEventListener('click', () => { curVersion().then(v => { if ($('updCur')) $('updCur').textContent = v; }); });

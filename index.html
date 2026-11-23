@@ -9,8 +9,8 @@
 <meta name="theme-color" content="#05050a">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <link rel="manifest" href="manifest.json">
-<link rel="stylesheet" href="styles.css?v=mwsz31r0">
-<link rel="stylesheet" href="mobile.css?v=mwsz31r0">
+<link rel="stylesheet" href="styles.css?v=mwt10hoc">
+<link rel="stylesheet" href="mobile.css?v=mwt10hoc">
 </head>
 <body>
 <canvas id="fx-bg"></canvas>
@@ -262,19 +262,25 @@
       <label class="wide">رموز الأسهم (افصل بفاصلة)<input id="sStocks" type="text" dir="ltr"></label>
       <label class="wide">العملات الرقمية<input id="sCrypto" type="text" dir="ltr"></label>
       <label class="wide">العملات مقابل الدرهم<input id="sFx" type="text" dir="ltr"></label>
-      <label>سعر الليرة السورية المعتمد<select id="sSypMode"><option value="market">سعر السوق (الصرافين)</option><option value="official">نشرة مصرف سوريا المركزي</option></select></label>
+      <label>سعر الليرة السورية المعتمد<select id="sSypMode"><option value="live">لحظي من موقع سعر الليرة اليوم (sp-today)</option><option value="market">سعر السوق (يدوي)</option><option value="official">نشرة مصرف سوريا المركزي</option></select></label>
       <label>سعر السوق: 1 دولار =<input id="sSypM" type="text" inputmode="decimal" dir="ltr"></label>
       <label>سعر المركزي: 1 دولار =<input id="sSypO" type="text" inputmode="decimal" dir="ltr"></label>
       <label>تحديث الأسهم والنحاس كل<select id="sInt"><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option><option value="30">30 ثانية</option><option value="60">دقيقة</option></select></label>
       <label>مدة كل صفحة في وضع العرض<select id="sTv"><option value="10">10 ثوانٍ</option><option value="15">15 ثانية</option><option value="30">30 ثانية</option></select></label>
     </div>
     <p class="note">أمثلة: AAPL, NVDA, 2222.SR (أرامكو), EMAAR.AE (إعمار) · رقمية: BTC, ETH, SOL, XRP, BNB, DOGE<br>الأسعار عالمية مباشرة بتوقيت الإمارات. أسعار الذهب هي السعر الفوري العالمي بدون مصنعية أو ضريبة.</p>
+    <div class="upd-box" id="updBox">
+      <div class="upd-row"><span>الإصدار الحالي: <b class="num" id="updCur">—</b></span><button class="upd-btn" id="updBtn">⟳ التحقق من التحديثات</button></div>
+      <div class="upd-msg" id="updMsg"></div>
+      <div class="upd-bar" id="updBar"><i></i></div>
+    </div>
     <button class="primary" id="sSave">حفظ</button>
   </div>
 </div>
 
-<script src="web-fit.js?v=mwsz31r0"></script>
-<script src="mobile-api.js?v=mwsz31r0"></script>
-<script src="app.js?v=mwsz31r0"></script>
+<script src="version.js?v=mwt10hoc"></script>
+<script src="web-fit.js?v=mwt10hoc"></script>
+<script src="mobile-api.js?v=mwt10hoc"></script>
+<script src="app.js?v=mwt10hoc"></script>
 </body>
 </html>

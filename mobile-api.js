@@ -210,14 +210,27 @@ async function stocks(symbols) {
   return out;
 }
 
+// سعر الليرة السورية من sp-today.com (سوريا - عام). الأرقام تصل بالليرة القديمة فنحوّلها للجديدة
+const SPTODAY_KEY = '41dc5168dfddc6731f4fddb7ad9a1e81';
+async function sypRate() {
+  const r = await fetch('https://api-v2.sp-today.com/api/v1/currencies?api_key=' + SPTODAY_KEY, { headers: { 'Accept': 'application/json', 'X-API-KEY': SPTODAY_KEY } });
+  if (!r.ok) throw new Error('sp-today ' + r.status);
+  const j = await r.json(); const d = j && j.data;
+  const usd = d && d.currencies && d.currencies.find(c => c.code === 'USD');
+  const c = usd && usd.cities && (usd.cities.damascus || Object.values(usd.cities)[0]);
+  if (!c || !c.buy) throw new Error('sp-today: no USD');
+  const k = d.unit === 'old' ? 100 : 1;
+  return { buy: c.buy / k, sell: (c.sell || c.buy) / k, changePct: c.change || 0, updated: d.updated_at || '', source: 'sp-today.com' };
+}
+
 HANDLERS['fetch-all'] = async (_e, opts) => {
   const symbols = (opts && opts.stocks) || [];
   const cl = (opts && opts.crypto) || ['BTC', 'ETH'];
-  const [gold, silver, cr, rates, stk, cu, uae] = await Promise.allSettled([
-    metal('XAU', 'GC=F'), metal('XAG', 'SI=F'), cryptos(cl), fx(), stocks(symbols), copper(), uaeStocks()
+  const [gold, silver, cr, rates, stk, cu, uae, sy] = await Promise.allSettled([
+    metal('XAU', 'GC=F'), metal('XAG', 'SI=F'), cryptos(cl), fx(), stocks(symbols), copper(), uaeStocks(), sypRate()
   ]);
   const pick = r => r.status === 'fulfilled' ? r.value : { error: String(r.reason && r.reason.message || r.reason) };
-  return { gold: pick(gold), silver: pick(silver), crypto: pick(cr), fx: pick(rates), stocks: pick(stk), copper: pick(cu), uae: pick(uae), at: Date.now() };
+  return { gold: pick(gold), silver: pick(silver), crypto: pick(cr), fx: pick(rates), stocks: pick(stk), copper: pick(cu), uae: pick(uae), syp: pick(sy), at: Date.now() };
 };
 
 // تحديث سريع للذهب والفضة (السعر الفوري فقط) لاستخدامه كل بضع ثوانٍ
