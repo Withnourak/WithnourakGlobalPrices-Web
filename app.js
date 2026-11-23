@@ -108,13 +108,14 @@ const curName = () => cfg.cur === 'AED' ? 'درهم' : cfg.cur === 'SYP' ? 'لي
 // رمز الدرهم الإماراتي الجديد (حرف D بخطين أفقيين) ورمز الدولار
 const DH = '<svg class="dh" viewBox="0 0 24 24" aria-label="درهم"><path d="M7 3.5v17M7 3.5h3.6a8.5 8.5 0 0 1 0 17H7M2.5 9.6h17.2M2.5 14.4h17.2"/></svg>';
 const sym = c => c === 'AED' ? DH : c === 'SYP' ? '' : '<i class="usd-s">$</i>';
-const money = (usd, cur, d = 2) => usd == null || !isFinite(usd) ? '—' : `<span class="m">${cur === 'AED' ? `${DH}${fmt(usd * aed(), d)}` : cur === 'SYP' ? `${fmt(usd * syp(), 0)} ليرة سورية` : `$${fmt(usd, d)}`}</span>`;
-const unitHtml = (extra = '') => `<span>${curName()}${extra}</span>`;
+const money = (usd, cur, d = 2) => usd == null || !isFinite(usd) ? '—' : `<span class="m">${cur === 'AED' ? `${DH}${fmt(usd * aed(), d)}` : cur === 'SYP' ? `${fmt(usd * syp(), 0)}` : `$${fmt(usd, d)}`}</span>`;
+// اسم العملة يظهر فقط لليرة السورية (لا رمز لها)؛ الدولار والدرهم يكفيهما الرمز
+const unitHtml = (extra = '') => { const t = (cfg.cur === 'SYP' ? 'ليرة سورية' + extra : extra.replace(/^\s*\/\s*/, '')); return t ? `<span>${t}</span>` : ''; };
 // رمز العملة الكبير بجانب كل سعر رئيسي (بنفس حجم رمز السعر الثاني)
 function syncSyms() { document.querySelectorAll('.cur-sym').forEach(e => { const c = e.dataset.fixed || cfg.cur; const h = c === 'AED' ? DH : c === 'SYP' ? '' : '$'; if (e._h !== h) { e._h = h; e.innerHTML = h; } }); }
 const dual = (usd, d = 2) => money(usd, cfg.cur === 'AED' ? 'USD' : cfg.cur === 'SYP' ? 'USD' : 'AED', d);
 const dualHtml = (usd, d = 2) => `<span class="dl">${dual(usd, d)}</span>`;
-const setDual = (id, usd, d) => { const el = $(id); if (el) el.innerHTML = `<b>${dual(usd, d)}</b><small>${cfg.cur === 'USD' ? 'درهم' : 'دولار'}</small>`; };
+const setDual = (id, usd, d) => { const el = $(id); if (el) el.innerHTML = `<b>${dual(usd, d)}</b>`; };
 const ok = x => x && !x.error;
 const btcQ = () => (Array.isArray(data && data.crypto) ? data.crypto : []).find(c => c.symbol === 'BTC');
 
@@ -562,7 +563,7 @@ function renderGold() {
     else { odo($('gpBig'), fmtC(conv(m.price), 3), m.price); $('gpBig').className = 'odo silver'; $('gpBigU').innerHTML = unitHtml(' / أونصة'); setDual('gpDual', m.price, 3); }
     delta($('gpDelta'), m.changePct);
   }
-  const head = `<tr><th>الوحدة</th><th>${DH} درهم إماراتي</th><th>$ دولار أمريكي</th></tr>`;
+  const head = `<tr><th>الوحدة</th><th>${DH}</th><th>$</th></tr>`;
   let rowPct = null;
   const arrow = () => rowPct == null ? '' : `<i class="rarr ${rowPct >= 0 ? 'up' : 'down'}">${rowPct >= 0 ? '▲' : '▼'}</i>`;
   const row = (lbl, usd) => `<tr><td>${arrow()}${lbl}</td><td><span class="num">${DH}${fmt(usd * aed())}</span></td><td class="u"><span class="num">$${fmt(usd)}</span></td></tr>`;
@@ -593,7 +594,7 @@ function calc() {
   const w = toNum($('cW').value), m = toNum($('cM').value);
   let total = w * (data.gold.price / OZ * st.karat / 24 * aed() + m);
   if ($('cV').checked) total *= 1.05;
-  $('cOut').innerHTML = `<span class="num">${DH}${fmt(total)}</span> <small class="cu-u">درهم</small><span class="calc-alt"><span class="num">$${fmt(total / aed())}</span> <small>دولار</small></span>`;
+  $('cOut').innerHTML = `<span class="num">${DH}${fmt(total)}</span><span class="calc-alt"><span class="num">$${fmt(total / aed())}</span></span>`;
   $('cOutUsd').textContent = `${fmt(w)} غرام عيار ${st.karat}`;
 }
 ['cW', 'cM', 'cV'].forEach(id => $(id).addEventListener('input', calc));
@@ -609,7 +610,7 @@ function renderFx() {
     const fc = f.prev && f.cur && f.prev[c] && f.cur[c] ? ((3.6725 / f.cur[c]) / (3.6725 / f.prev[c]) - 1) * 100 : null;
     const bd = fc == null ? '' : badge(Math.abs(fc) < 0.005 ? 0 : fc, 1);
     if (v < 0.2) return `<div class="fxt"><div class="t"><span class="fl">${fl}</span>${c}${bd}</div><div class="n">1 درهم يساوي</div><div class="r">${fmt(1 / v, 2)} <small>${n}</small></div></div>`;
-    return `<div class="fxt"><div class="t"><span class="fl">${fl}</span>${c}${bd}</div><div class="n">1 ${n}</div><div class="r">${fmt(v, v < 1 ? 4 : 3)} <small>درهم</small></div></div>`;
+    return `<div class="fxt"><div class="t"><span class="fl">${fl}</span>${c}${bd}</div><div class="n">1 ${n}</div><div class="r">${DH}${fmt(v, v < 1 ? 4 : 3)}</div></div>`;
   }).join('');
   const sels = [$('cvFrom'), $('cvTo')];
   const list = ['AED', 'USD', ...(r.SYP ? ['SYP'] : []), ...Object.keys(FX_NAMES).filter(c => !['AED', 'USD', 'SYP'].includes(c) && r[c])];
@@ -650,7 +651,7 @@ function renderStocks() {
   if ($('skLogo')._s !== q.symbol) { $('skLogo')._s = q.symbol; $('skLogo').outerHTML = logoHtml(q.symbol, 'lg').replace('<span class="logo-chip', '<span id="skLogo" class="logo-chip'); }
   const isAed = q.currency === 'AED';
   odo($('skBig'), fmt(isAed ? q.price / aed() : q.price), q.price); delta($('skDelta'), q.changePct);
-  $('skDual').innerHTML = q.currency && !['USD', 'AED'].includes(q.currency) ? '' : `<b>${DH}${fmt(isAed ? q.price : q.price * aed())}</b><small>درهم</small>`;
+  $('skDual').innerHTML = q.currency && !['USD', 'AED'].includes(q.currency) ? '' : `<b>${DH}${fmt(isAed ? q.price : q.price * aed())}</b>`;
   const h = $('skHeat'); h.style.setProperty('--c', Math.min(5, Math.max(3, Math.ceil(L.length / 3))));
   h.innerHTML = L.map(x => tileHtml(x, true)).join(''); requestAnimationFrame(() => fitPrices(h));
   h.querySelectorAll('.tile').forEach((t, i) => {
