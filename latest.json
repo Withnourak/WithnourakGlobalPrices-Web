@@ -1,47 +1,47 @@
 {
- "version": "3.4.2",
- "notes": "رموز العملات فقط دون تكرار الكتابة، والليرة السورية بالقيمة الجديدة",
+ "version": "3.4.3",
+ "notes": "سعر الليرة السورية من sp-today يُجلب مركزياً 3 مرات يومياً ضمن حد الخطة المجانية",
  "files": {
   "win-x64": {
-   "name": "WithnourakGlobalPrices-Setup-3.4.2-Windows-x64.exe",
-   "size": 94326049,
+   "name": "WithnourakGlobalPrices-Setup-3.4.3-Windows-x64.exe",
+   "size": 94319248,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.2-Windows-x64.exe"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.3-Windows-x64.exe"
    ]
   },
   "win-ia32": {
-   "name": "WithnourakGlobalPrices-Setup-3.4.2-Windows-x86-32bit.exe",
-   "size": 88074468,
+   "name": "WithnourakGlobalPrices-Setup-3.4.3-Windows-x86-32bit.exe",
+   "size": 88083332,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.2-Windows-x86-32bit.exe"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.3-Windows-x86-32bit.exe"
    ]
   },
   "mac-arm64": {
-   "name": "WGP-3.4.2-mac-arm64.tar.xz",
-   "size": 81803200,
+   "name": "WGP-3.4.3-mac-arm64.tar.xz",
+   "size": 81812972,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.2-mac-arm64.tar.xz"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.3-mac-arm64.tar.xz"
    ]
   },
   "mac-x64": {
-   "name": "WGP-3.4.2-mac-x64.tar.xz",
-   "size": 89216696,
+   "name": "WGP-3.4.3-mac-x64.tar.xz",
+   "size": 89212024,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.2-mac-x64.tar.xz"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.3-mac-x64.tar.xz"
    ]
   },
   "android": {
-   "name": "WithnourakGlobalPrices-3.4.2-Android.apk",
-   "size": 4942501,
+   "name": "WithnourakGlobalPrices-3.4.3-Android.apk",
+   "size": 4942478,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.2-Android.apk"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.3-Android.apk"
    ]
   },
   "ios": {
-   "name": "WithnourakGlobalPrices-3.4.2-iPhone.ipa",
-   "size": 2347336,
+   "name": "WithnourakGlobalPrices-3.4.3-iPhone.ipa",
+   "size": 2347318,
    "parts": [
-    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.2-iPhone.ipa"
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.3-iPhone.ipa"
    ]
   }
  }
