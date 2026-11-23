@@ -1,0 +1,44 @@
+name: Windows install test
+on:
+  workflow_dispatch:
+  push:
+    paths: ['.github/workflows/wintest.yml']
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        arch: [x64, x86-32bit]
+    runs-on: windows-latest
+    steps:
+      - name: Download installer
+        shell: pwsh
+        run: |
+          $u = "https://github.com/Withnourak/WithnourakGlobalPrices-Web/raw/downloads/WithnourakGlobalPrices-Setup-3.4.1-Windows-${{ matrix.arch }}.exe"
+          Invoke-WebRequest $u -OutFile setup.exe
+          (Get-Item setup.exe).Length
+      - name: Silent install
+        shell: pwsh
+        run: |
+          $p = Start-Process .\setup.exe -ArgumentList '/S' -Wait -PassThru
+          "exit code: $($p.ExitCode)"
+          Get-ChildItem "$env:LOCALAPPDATA\Programs\Withnourak Global Prices" | Select-Object Name, Length
+      - name: Launch and check
+        shell: pwsh
+        run: |
+          $exe = "$env:LOCALAPPDATA\Programs\Withnourak Global Prices\Withnourak Global Prices.exe"
+          $env:ELECTRON_ENABLE_LOGGING = "1"
+          $p = Start-Process $exe -PassThru -RedirectStandardError err.txt -RedirectStandardOutput out.txt
+          Start-Sleep 25
+          "HasExited: $($p.HasExited)  ExitCode: $(if ($p.HasExited) { $p.ExitCode })"
+          Get-Process | Where-Object { $_.ProcessName -like 'Withnourak*' } | Select-Object Id, ProcessName, MainWindowTitle, WorkingSet
+          "--- stderr ---"; Get-Content err.txt -ErrorAction SilentlyContinue | Select-Object -First 60
+          "--- stdout ---"; Get-Content out.txt -ErrorAction SilentlyContinue | Select-Object -First 30
+          Add-Type -AssemblyName System.Windows.Forms,System.Drawing
+          $b = [System.Windows.Forms.Screen]::PrimaryScreen.Bounds
+          $bmp = New-Object System.Drawing.Bitmap $b.Width, $b.Height
+          [System.Drawing.Graphics]::FromImage($bmp).CopyFromScreen($b.Location, [System.Drawing.Point]::Empty, $b.Size)
+          $bmp.Save("shot-${{ matrix.arch }}.png")
+          Get-WinEvent -LogName Application -MaxEvents 15 -ErrorAction SilentlyContinue | Where-Object { $_.LevelDisplayName -eq 'Error' } | Format-List TimeCreated, ProviderName, Message
+      - uses: actions/upload-artifact@v4
+        with: { name: shot-${{ matrix.arch }}, path: "shot-*.png" }
