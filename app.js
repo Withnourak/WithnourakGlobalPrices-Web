@@ -94,7 +94,7 @@ const fmt = (v, d = 2) => (v == null || !isFinite(v)) ? '—' : Number(v).toLoca
 const fmtAuto = v => v == null ? '—' : v >= 1000 ? fmt(v, 2) : v >= 1 ? fmt(v, 4) : fmt(v, 5);
 const aed = () => (data && data.fx && data.fx.rates && data.fx.rates.AED) || 3.6725;
 // سعر الليرة السورية الجديدة: يحدده المستخدم (سوق موازٍ أو نشرة المصرف المركزي)
-if (!cfg.syp3) { cfg.sypMode = 'live'; cfg.syp3 = true; store.set('cfg2', cfg); }
+cfg.sypMode = 'live';
 // live: السعر اللحظي من sp-today (سعر الشراء)، وإن تعذّر نستخدم آخر سعر محفوظ
 let sypCache = null;
 const sypLive = () => sypCache || (data && data.syp && data.syp.buy > 0 ? data.syp.buy : null);
@@ -680,7 +680,7 @@ async function refresh() {
     if (data) ['gold', 'silver', 'crypto', 'fx', 'stocks', 'copper'].forEach(k => { if (fresh[k] && fresh[k].error && ok(data[k])) fresh[k] = data[k]; });
     // الليرة السورية الجديدة = 100 ليرة قديمة: إذا أعاد المصدر السعر القديم نحوّله
     if (!ok(fresh.syp) && data && ok(data.syp)) fresh.syp = data.syp;
-    if (ok(fresh.syp) && fresh.syp.buy > 0) sypCache = fresh.syp.buy;
+    if (ok(fresh.syp) && fresh.syp.buy > 0) { sypCache = fresh.syp.buy; if (cfg.sypMarket !== sypCache) { cfg.sypMarket = sypCache; store.set('cfg2', cfg); } }
     if (ok(fresh.fx)) ['rates', 'prev', 'cur'].forEach(k => { const r = fresh.fx[k]; if (r) r.SYP = syp(); });
     // التغير اليومي لليرة من sp-today
     if (ok(fresh.fx) && fresh.fx.prev && cfg.sypMode === 'live' && ok(fresh.syp) && fresh.syp.changePct) fresh.fx.prev.SYP = syp() / (1 + fresh.syp.changePct / 100);
@@ -778,12 +778,12 @@ $('btnTv').onclick = () => tvT ? stopTv() : startTv();
 /* ================= الإعدادات ================= */
 $('btnSettings').onclick = () => {
   $('sStocks').value = cfg.stocks.join(', '); $('sCrypto').value = cfg.crypto.join(', '); $('sFx').value = cfg.fx.join(', ');
-  $('sInt').value = String(cfg.interval); $('sSypMode').value = cfg.sypMode; $('sSypM').value = cfg.sypMarket; $('sSypO').value = cfg.sypOfficial; $('sTv').value = String(cfg.tv); $('setModal').classList.add('open');
+  $('sInt').value = String(cfg.interval); $('sSypNow').innerHTML = '1 دولار = <span class="num">' + fmt(syp()) + '</span> ليرة سورية'; $('sTv').value = String(cfg.tv); $('setModal').classList.add('open');
 };
 $('sSave').onclick = () => {
   const list = v => v.split(/[,\s،]+/).map(x => x.trim().toUpperCase()).filter(Boolean);
   cfg.stocks = list($('sStocks').value).slice(0, 16); cfg.crypto = list($('sCrypto').value).slice(0, 12); cfg.fx = list($('sFx').value).slice(0, 20);
-  cfg.sypMode = $('sSypMode').value; cfg.sypMarket = toNum($('sSypM').value) || 150.5; cfg.sypOfficial = toNum($('sSypO').value) || 122;
+  
   cfg.interval = +$('sInt').value; cfg.tv = +$('sTv').value; store.set('cfg2', cfg);
   if (data && data.fx && data.fx.rates) data.fx.rates.SYP = syp();
   $('setModal').classList.remove('open'); schedule(); refresh(); connectCrypto(); renderAll();

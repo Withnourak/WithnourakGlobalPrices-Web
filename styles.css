@@ -844,3 +844,5 @@ input,textarea{user-select:text;-webkit-user-select:text}
 .upd-bar{height:8px;border-radius:99px;background:rgba(255,255,255,.08);margin-top:10px;overflow:hidden;display:none}
 .upd-bar.on{display:block}.upd-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--g1),var(--g3));transition:width .2s}
 .has-upd{position:relative}.has-upd::after{content:"";position:absolute;top:6px;left:8px;width:10px;height:10px;border-radius:50%;background:#ff4d5e;box-shadow:0 0 0 2px #0b0b10}
+.syp-info{grid-column:1/-1;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:10px 14px;border-radius:12px;background:rgba(0,122,61,.12);border:1px solid rgba(0,160,80,.35);font-weight:700}
+.syp-info b{color:#7ee2a8;font-size:1.1em}
