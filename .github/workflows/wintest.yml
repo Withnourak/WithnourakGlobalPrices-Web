@@ -41,4 +41,6 @@ jobs:
           $bmp.Save("shot-${{ matrix.arch }}.png")
           Get-WinEvent -LogName Application -MaxEvents 15 -ErrorAction SilentlyContinue | Where-Object { $_.LevelDisplayName -eq 'Error' } | Format-List TimeCreated, ProviderName, Message
       - uses: actions/upload-artifact@v4
-        with: { name: shot-${{ matrix.arch }}, path: "shot-*.png" }
+        with:
+          name: shot-${{ matrix.arch }}
+          path: shot-*.png
