@@ -21,7 +21,7 @@ jobs:
       - name: Build site
         run: |
           mkdir site
-          cp -r index.html *.js *.css *.png manifest.json fonts .nojekyll site/ 2>/dev/null || true
+          cp -r index.html download.html *.js *.css *.png manifest.json fonts .nojekyll site/ 2>/dev/null || true
           rm -f site/scripts
           node scripts/fetch-data.mjs
       - uses: actions/configure-pages@v5
