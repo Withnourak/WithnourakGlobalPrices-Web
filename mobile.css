@@ -144,4 +144,42 @@ body[data-cur=SYP] .st-foot b,body[data-cur=SYP] .st-foot.kilo b{font-size:14px!
 #homeHeat .tile.v3 .logo-chip.brand,#skHeat .tile.v3 .logo-chip.brand{height:64px!important;max-height:64px;width:min(70%,220px)!important}
 #homeHeat .tile.v3 .v3-top .cname,#skHeat .tile.v3 .v3-top .cname,#homeHeat .tile.v3 .v3-top .pc,#skHeat .tile.v3 .v3-top .pc{font-size:17px!important}
 
+/* ===== v3.3.3: منع خروج العناصر عن عرض الشاشة ===== */
+.page,.page *{min-width:0}
+.home-grid,.gold-grid,.fx-grid,.crypto-grid,.stocks-grid,.hist-grid{grid-template-columns:minmax(0,1fr)!important}
+.glass{max-width:100%;overflow:hidden}
+/* شريط الحالة: يلتف على سطرين بدل أن يُقص */
+.status{flex-wrap:wrap;overflow:visible!important;justify-content:center}
+.status .pill{flex:0 1 auto;white-space:nowrap}
+/* رأس بطاقة المعادن */
+.gold-grid .cc-head{flex-direction:column;align-items:stretch;gap:12px}
+.metal-tabs{display:flex!important;width:100%;gap:6px}
+.metal-tabs button{flex:1 1 0;padding:9px 4px!important;font-size:16px!important}
+.big-price{display:flex!important;flex-wrap:wrap!important;justify-content:center;align-items:baseline;gap:4px 10px;width:100%;font-size:40px!important}
+.big-price .dual-box{flex:1 1 100%;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 10px;border:0!important;padding:0!important;margin:0!important}
+.big-price .dual-box .unit{flex:1 1 100%;text-align:center}
+.big-price .dual{font-size:26px!important}
+.big-price .delta{flex:none}
+/* أزرار الفترات: شبكة 4 أعمدة تلتف */
+.ranges{display:grid!important;grid-template-columns:repeat(4,1fr);gap:6px;overflow:visible!important;width:100%}
+.ranges button{padding:8px 2px!important;font-size:15px!important;white-space:nowrap}
+/* الجداول: تتسع للشاشة دائماً */
+.ptable{width:100%;table-layout:fixed}
+.ptable th,.ptable td{white-space:normal;overflow-wrap:anywhere}
+.ptable th:first-child,.ptable td:first-child{width:42%}
+.ptable td{font-size:13px!important;padding:8px 3px!important}
+.ptable td .num{font-size:14px!important;white-space:nowrap}
+.ptable .kb{min-width:30px;font-size:11px;padding:3px 4px}
+/* تبويبات الأسواق (العالمية/أبوظبي/دبي) تظهر كاملة */
+.movers .sec-head,.movers .ch-head,.movers>div:first-child{flex-wrap:wrap;gap:8px}
+.mkt-tabs{display:flex!important;width:100%;order:3}
+.mkt-tabs button{flex:1 1 0;padding:8px 2px!important;font-size:14px!important;white-space:nowrap}
+.status .pill:empty,.status>*:empty{display:none!important}
+.big-price .dual-box .sep,.big-price .vsep{display:none!important}
+.status .pill:has(> span:empty){display:none!important}
+.status .pill{flex:none!important;max-width:100%;overflow:visible}
+.status .pill:has(#mktNY){display:none!important}
+.topbar h1{white-space:normal!important;line-height:1.25}
+.status{gap:5px!important}.status .pill{font-size:11px!important;padding:5px 9px!important;gap:5px}
+
 }
