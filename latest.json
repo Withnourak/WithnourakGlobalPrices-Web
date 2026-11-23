@@ -1,0 +1,48 @@
+{
+ "version": "3.4.0",
+ "notes": "زر التحديث من داخل البرنامج، وسعر الليرة السورية لحظياً من sp-today.com",
+ "files": {
+  "win-x64": {
+   "name": "WithnourakGlobalPrices-Setup-3.4.0-Windows-x64.exe",
+   "size": 94317897,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.0-Windows-x64.exe"
+   ]
+  },
+  "win-ia32": {
+   "name": "WithnourakGlobalPrices-Setup-3.4.0-Windows-x86-32bit.exe",
+   "size": 88078393,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-Setup-3.4.0-Windows-x86-32bit.exe"
+   ]
+  },
+  "mac-arm64": {
+   "name": "WGP-3.4.0-mac-arm64.tar.xz",
+   "size": 81803336,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.0-mac-arm64.tar.xz"
+   ]
+  },
+  "mac-x64": {
+   "name": "WGP-3.4.0-mac-x64.tar.xz",
+   "size": 89225236,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WGP-3.4.0-mac-x64.tar.xz"
+   ]
+  },
+  "android": {
+   "name": "WithnourakGlobalPrices-3.4.0-Android.apk",
+   "size": 4942533,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.0-Android.apk"
+   ]
+  },
+  "ios": {
+   "name": "WithnourakGlobalPrices-3.4.0-iPhone.ipa",
+   "size": 2347364,
+   "parts": [
+    "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.0-iPhone.ipa"
+   ]
+  }
+ }
+}
