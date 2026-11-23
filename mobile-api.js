@@ -210,17 +210,14 @@ async function stocks(symbols) {
   return out;
 }
 
-// سعر الليرة السورية من sp-today.com (سوريا - عام). الأرقام تصل بالليرة القديمة فنحوّلها للجديدة
-const SPTODAY_KEY = '41dc5168dfddc6731f4fddb7ad9a1e81';
+// سعر الليرة السورية: يجلبه GitHub من sp-today.com ثلاث مرات يومياً (ضمن حد الخطة المجانية)
+// وتقرؤه كل النسخ من ملف مشترك، فلا يستهلك أي جهاز من حصة المفتاح
 async function sypRate() {
-  const r = await fetch('https://api-v2.sp-today.com/api/v1/currencies?api_key=' + SPTODAY_KEY, { headers: { 'Accept': 'application/json', 'X-API-KEY': SPTODAY_KEY } });
-  if (!r.ok) throw new Error('sp-today ' + r.status);
-  const j = await r.json(); const d = j && j.data;
-  const usd = d && d.currencies && d.currencies.find(c => c.code === 'USD');
-  const c = usd && usd.cities && (usd.cities.damascus || Object.values(usd.cities)[0]);
-  if (!c || !c.buy) throw new Error('sp-today: no USD');
-  const k = d.unit === 'old' ? 100 : 1;
-  return { buy: c.buy / k, sell: (c.sell || c.buy) / k, changePct: c.change || 0, updated: d.updated_at || '', source: 'sp-today.com' };
+  const r = await fetch('https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/syp.json?t=' + Math.floor(Date.now() / 600000));
+  if (!r.ok) throw new Error('syp ' + r.status);
+  const j = await r.json();
+  if (!(j && j.buy > 0)) throw new Error('syp: no rate');
+  return { buy: +j.buy, sell: +(j.sell || j.buy), changePct: +(j.changePct || 0), updated: j.updated || '', source: j.source || 'sp-today.com' };
 }
 
 HANDLERS['fetch-all'] = async (_e, opts) => {
