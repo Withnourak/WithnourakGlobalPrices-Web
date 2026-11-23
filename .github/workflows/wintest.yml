@@ -14,8 +14,11 @@ jobs:
       - name: Download installer
         shell: pwsh
         run: |
-          $u = "https://github.com/Withnourak/WithnourakGlobalPrices-Web/raw/downloads/WithnourakGlobalPrices-Setup-3.4.1-Windows-${{ matrix.arch }}.exe"
-          Invoke-WebRequest $u -OutFile setup.exe
+          $u = "https://raw.githubusercontent.com/Withnourak/WithnourakGlobalPrices-Web/downloads/WithnourakGlobalPrices-3.4.2-Windows-${{ matrix.arch }}.zip"
+          Invoke-WebRequest $u -OutFile app.zip
+          (Get-Item app.zip).Length
+          Expand-Archive app.zip -DestinationPath x
+          Move-Item (Get-ChildItem x\*.exe)[0].FullName setup.exe
           (Get-Item setup.exe).Length
       - name: Silent install
         shell: pwsh
